@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부안미디어센터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+/* 레이아웃: 흰 바탕 + 가운데 로고 헤더, 한 화면에 한 메시지씩 쌓이는 스크롤형 메인, 메뉴별로 로고 색 하나를 포인트로 사용 */
+:root{
+  --bg:#ffffff;
+  --soft:#f5f5f7;
+  --ink:#13233a;
+  --muted:#5d6776;
+  --line:#e4e6eb;
+  --accent:#004070;
+  /* 로고에서 뽑은 색 */
+  --c-orange:#E08020; --c-green:#70A030; --c-navy:#004070;
+  --c-pink:#D05080;   --c-teal:#008090;  --c-purple:#8060A0;
+  /* 글자용(흰 바탕 대비 확보) */
+  --t-orange:#b8620e; --t-green:#4f7d1c; --t-teal:#006b78; --t-pink:#b23c69; --t-purple:#6a4c8c;
+  --font: "Pretendard","Pretendard Variable","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --radius:22px;
+  --display:"Jua","Pretendard","Noto Sans KR",sans-serif;
+  --wrap:1180px;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{font-size:112.5%;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.big{font-size:131%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--c-orange);outline-offset:3px;border-radius:6px}
+h1,h2,h3{line-height:1.25;text-wrap:balance;margin:0;letter-spacing:-0.02em}
+.hero h1,.sec-title,.page-hero h1,.stat b,.quick a b,.film-card h3,.apply-card h3{font-family:var(--display);font-weight:400;letter-spacing:-0.01em}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;z-index:100}
+.skip:focus{left:12px;top:12px}
+
+/* 미리보기 안내 */
+.demo-bar{background:#fff7e8;color:#7a4a08;font-size:.78rem;text-align:center;padding:8px 16px;border-bottom:1px solid #f1dfbd}
+
+/* 헤더 */
+header.site{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid transparent;transition:border-color .3s}
+header.site.compact{border-bottom-color:var(--line)}
+.head-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px 0 6px;transition:padding .3s}
+header.site.compact .head-top{padding:8px 0 2px}
+.logo-link{grid-column:2;display:block}
+.logo-link img{height:46px;width:auto;transition:height .3s}
+header.site.compact .logo-link img{height:32px}
+.head-tools{grid-column:3;justify-self:end;display:flex;gap:8px;align-items:center}
+.btn-text{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:.8rem;cursor:pointer;font-weight:600}
+.btn-text[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.menu-btn{display:none;border:0;background:none;cursor:pointer;padding:8px}
+.menu-btn span{display:block;width:24px;height:2px;background:var(--ink);margin:5px 0;border-radius:2px}
+nav.gnb ul{list-style:none;margin:0;padding:6px 0 10px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+nav.gnb a{display:block;text-decoration:none;font-weight:600;font-size:.92rem;padding:8px 16px;border-radius:999px;color:var(--ink);position:relative}
+nav.gnb a:hover{background:var(--soft)}
+nav.gnb a[aria-current="page"]{color:#fff;background:var(--mc,var(--ink))}
+
+/* 공통 섹션 */
+main{display:block}
+.page{display:none}
+.page.on{display:block}
+section.block{padding:88px 0}
+section.block.soft{background:var(--soft)}
+.eyebrow{font-weight:700;font-size:.85rem;color:var(--mc,var(--accent));margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:"";width:10px;height:10px;background:var(--mcb,var(--c-navy));box-shadow:2px 2px 0 rgba(27,36,51,.25)}
+.sec-title{font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:800}
+.sec-lead{color:var(--muted);margin:12px 0 0;max-width:40em}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:36px}
+.more{text-decoration:none;font-weight:700;color:var(--mc,var(--accent));white-space:nowrap}
+.more::after{content:" ›"}
+.page-hero{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+.page-hero h1{font-size:clamp(2rem,4.6vw,3.2rem);font-weight:800}
+.page-hero p{color:var(--muted);margin:14px 0 0;max-width:40em;font-size:1.05rem}
+
+/* 메뉴별 색 */
+[data-c="navy"]{--mc:var(--c-navy);--mcb:var(--c-navy)}
+[data-c="orange"]{--mc:var(--t-orange);--mcb:var(--c-orange)}
+[data-c="teal"]{--mc:var(--t-teal);--mcb:var(--c-teal)}
+[data-c="green"]{--mc:var(--t-green);--mcb:var(--c-green)}
+[data-c="pink"]{--mc:var(--t-pink);--mcb:var(--c-pink)}
+[data-c="purple"]{--mc:var(--t-purple);--mcb:var(--c-purple)}
+
+/* 히어로 */
+.hero{position:relative;text-align:center;padding:96px 0 0;overflow:hidden;isolation:isolate;background:linear-gradient(#eaf5ff,#ffffff 230px)}
+.hero .wrap{padding-bottom:56px}
+.hero-logo{width:min(560px,82vw);margin:0 auto;transform:scale(calc(1 - var(--p,0)*.18));opacity:calc(1 - var(--p,0)*.6);transition:transform .05s linear}
+.hero h1{font-size:clamp(2rem,5.4vw,3.8rem);font-weight:800;margin-top:44px}
+.hero h1 .grad{background:linear-gradient(90deg,var(--c-orange),var(--c-pink) 35%,var(--c-purple) 65%,var(--c-teal));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);font-size:1.1rem;margin:18px auto 0;max-width:30em}
+.hero-cta{display:flex;gap:12px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 26px;font-weight:700;text-decoration:none;cursor:pointer;font-size:1rem;min-height:52px}
+.btn.primary{background:var(--ink);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.btn.primary:hover{background:#000}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn.ghost:hover{background:#eaeaed}
+.btn.color{background:var(--mcb,var(--ink));color:#fff}
+.dots{position:absolute;inset:0;pointer-events:none;z-index:-1}
+.dots i{position:absolute;border-radius:50%;opacity:.12;filter:blur(2px)}
+
+/* 숫자 */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.stat b{display:block;font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.03em}
+.stat span{color:var(--muted);font-weight:600}
+.stat:nth-child(1) b{color:var(--t-orange)}.stat:nth-child(2) b{color:var(--t-teal)}.stat:nth-child(3) b{color:var(--t-green)}.stat:nth-child(4) b{color:var(--t-pink)}
+.note-small{font-size:.75rem;color:var(--muted);text-align:center;margin-top:18px}
+
+/* 카드 그리드 */
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:28px 22px}
+.card{display:block;text-decoration:none;color:inherit;border-radius:var(--radius);transition:transform .25s}
+.card:hover{transform:translateY(-4px)}
+.thumb{position:relative;aspect-ratio:1/1;border-radius:var(--radius);overflow:hidden;background:var(--soft)}
+.thumb.wide{aspect-ratio:16/9}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb.wide .ph{place-items:end start;font-size:1.05rem;padding:14px 16px;text-align:left}
+.ph{width:100%;height:100%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:clamp(1.1rem,2.2vw,1.7rem);letter-spacing:-0.04em;text-align:center;padding:12px}
+.ph small{display:block;font-size:.8rem;font-weight:600;opacity:.85;letter-spacing:0;margin-top:4px}
+.avatar{position:absolute;left:12px;bottom:12px;width:60px;height:60px;border-radius:50%;border:3px solid #fff;overflow:hidden;background:#ddd;box-shadow:0 4px 14px rgba(0,0,0,.15);display:grid;place-items:center;font-weight:800;color:#fff;font-size:1.2rem}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.play{position:absolute;inset:0;display:grid;place-items:center}
+.play::before{content:"";width:58px;height:58px;border-radius:50%;background:rgba(0,0,0,.55)}
+.play::after{content:"";position:absolute;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+.card-body{padding:14px 4px 0}
+.card-title{font-weight:700;font-size:1.02rem}
+.card-desc{color:var(--muted);font-size:.88rem;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.badges{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--soft);color:var(--ink)}
+.badge.link{color:#fff}
+.lt-스마트스토어{background:#03a94d}.lt-블로그{background:#1e9e5a}.lt-유튜브{background:#d93025}.lt-인스타그램{background:#c13584}.lt-기타{background:#56606e}
+
+/* 필터 칩 */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 18px;cursor:pointer;font-weight:600;font-size:.9rem;min-height:42px}
+.chip[aria-pressed="true"]{background:var(--mcb,var(--ink));border-color:var(--mcb,var(--ink));color:#fff}
+
+/* 수업 */
+.class-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.class-card{background:#fff;border-radius:var(--radius);padding:24px;border:1px solid var(--line);display:flex;flex-direction:column;gap:8px;cursor:pointer;text-align:left}
+.class-card:hover{border-color:var(--c-orange)}
+.class-card{min-width:0}
+.class-card .date{font-weight:800;font-size:1.3rem;color:var(--t-orange);font-variant-numeric:tabular-nums}
+.class-card h3{font-size:1.1rem}
+.class-card .meta{color:var(--muted);font-size:.86rem}
+.st{display:inline-block;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:999px;width:max-content}
+.st-모집중{background:#fdecd9;color:#9a4f06}
+.st-마감{background:#eceef1;color:#59616d}
+.st-진행중{background:#dff1f3;color:#005c66}
+
+.cal-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.cal-nav{display:flex;align-items:center;gap:10px}
+.cal-nav h2{font-size:1.6rem;font-weight:800;min-width:7.5em;text-align:center;font-variant-numeric:tabular-nums}
+.icon-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:1.2rem;font-weight:700}
+.seg{display:inline-flex;background:var(--soft);border-radius:999px;padding:4px}
+.seg button{border:0;background:none;border-radius:999px;padding:8px 18px;font-weight:700;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cal .dow{background:var(--soft);font-weight:700;font-size:.85rem;text-align:center;padding:10px 0;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cal .dow:first-child{color:#c0392b}.cal .dow:last-child{color:#2a62b8}
+.cal .day{min-height:116px;padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:#fff;display:flex;flex-direction:column;gap:4px}
+.cal .day.out{background:#fafafa;color:#b5bac2}
+.cal .day .n{font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+.cal .day.today .n{background:var(--c-orange);color:#fff;border-radius:999px;width:28px;height:28px;display:grid;place-items:center}
+.ev{border:0;text-align:left;font-size:.74rem;font-weight:700;padding:4px 7px;border-radius:7px;cursor:pointer;line-height:1.35;overflow:hidden;width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ev.s-모집중{background:#fdecd9;color:#8a4705}
+.ev.s-마감{background:#eceef1;color:#59616d}
+.ev.s-진행중{background:#dff1f3;color:#005c66}
+.cal-list{display:flex;flex-direction:column;gap:12px}
+.cal-item{display:grid;grid-template-columns:110px 1fr auto;gap:18px;align-items:center;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;text-align:left;width:100%}
+.cal-item .d{font-weight:800;font-variant-numeric:tabular-nums;color:var(--t-orange)}
+.cal-item .d small{display:block;color:var(--muted);font-weight:600}
+.legend{display:flex;gap:14px;font-size:.82rem;color:var(--muted);margin-top:14px;flex-wrap:wrap}
+.empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+
+/* 절차 */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s;margin:0 0 40px;padding:0;list-style:none}
+.steps li{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;position:relative}
+.steps li::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--mcb);color:#fff;font-weight:800;margin-bottom:10px}
+.steps b{display:block}
+.steps span{color:var(--muted);font-size:.86rem}
+
+/* 폼 */
+.form-wrap{background:#fff;border:1px solid var(--line);border-radius:24px;padding:36px;max-width:820px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-weight:700;font-size:.9rem}
+.field label .req{color:#c0392b;margin-left:2px}
+.field input,.field select,.field textarea{border:1px solid #cfd3da;border-radius:12px;padding:13px 14px;background:#fff;min-height:50px}
+.field textarea{min-height:130px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--mcb,var(--ink));box-shadow:0 0 0 3px rgba(224,128,32,.18)}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label{display:flex;align-items:center;gap:6px;border:1px solid #cfd3da;border-radius:999px;padding:8px 14px;font-weight:600;font-size:.88rem;cursor:pointer}
+.agree{background:var(--soft);border-radius:14px;padding:16px 18px;font-size:.85rem;color:var(--muted)}
+.agree details summary{cursor:pointer;font-weight:700;color:var(--ink)}
+.agree label{display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:700;color:var(--ink);font-size:.92rem}
+.agree input{width:20px;height:20px}
+.form-msg{margin-top:16px;padding:14px 16px;border-radius:12px;font-weight:600;display:none}
+.form-msg.show{display:block}
+.form-msg.ok{background:#e9f5df;color:#3c6414}
+.form-msg.info{background:#fff4e2;color:#7a4a08}
+.form-msg.err{background:#fde8e8;color:#9b2222}
+
+/* 공지 */
+.notice-list{border-top:2px solid var(--ink)}
+.notice{border-bottom:1px solid var(--line)}
+.notice button{width:100%;display:grid;grid-template-columns:70px 1fr 120px;gap:12px;align-items:center;padding:20px 8px;background:none;border:0;text-align:left;cursor:pointer}
+.notice .no{color:var(--muted);font-variant-numeric:tabular-nums;text-align:center}
+.notice .pin{background:var(--c-purple);color:#fff;font-size:.72rem;font-weight:800;border-radius:999px;padding:3px 10px;justify-self:center}
+.notice .t{font-weight:700}
+.notice .dt{color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;font-size:.88rem}
+.notice .body{display:none;padding:4px 8px 26px 90px;color:#38424f;white-space:pre-line}
+.notice.open .body{display:block}
+.notice .body a{color:var(--t-purple);font-weight:700}
+
+/* 바로가기 */
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.quick a{display:flex;flex-direction:column;gap:10px;text-decoration:none;padding:32px;border-radius:28px;color:#fff;min-height:200px;justify-content:flex-end;transition:transform .25s;box-shadow:0 6px 0 rgba(27,36,51,.18)}
+.quick a:hover{transform:translateY(-4px)}
+.quick a b{font-size:1.5rem}
+.quick a span{opacity:.9}
+.q1{background:var(--c-orange)}.q2{background:var(--c-teal)}.q3{background:var(--c-purple)}
+
+/* 소개 */
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.info{background:#fff;border-radius:var(--radius);padding:28px;border:1px solid var(--line)}
+.info h3{font-size:1.1rem;margin-bottom:10px}
+.info p{margin:0;color:var(--muted)}
+.space-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.map-frame{position:relative;border-radius:var(--radius);overflow:hidden;background:var(--soft);aspect-ratio:16/7;min-height:280px;margin-bottom:22px;border:1px solid var(--line)}
+.map-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.map-frame .map-fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}
+@media (max-width:760px){.map-frame{aspect-ratio:4/3}}
+.map-box{border-radius:var(--radius);background:var(--soft);padding:32px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.map-box dl{margin:0;display:grid;grid-template-columns:90px 1fr;gap:10px 14px}
+.map-box dt{font-weight:700}
+.map-box dd{margin:0;color:var(--muted)}
+
+/* 모달 */
+.modal{position:fixed;inset:0;background:rgba(10,20,35,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:80}
+.modal.show{display:flex}
+.modal-box{background:#fff;border-radius:24px;max-width:520px;width:100%;padding:32px;position:relative;max-height:90vh;overflow:auto}
+.modal-box h3{font-size:1.4rem;margin:10px 0 16px}
+.modal-box dl{display:grid;grid-template-columns:70px 1fr;gap:8px 12px;margin:0 0 24px}
+.modal-box dt{font-weight:700;color:var(--muted)}
+.modal-box dd{margin:0}
+.modal-close{position:absolute;right:16px;top:16px}
+
+/* 푸터 */
+footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88rem}
+.foot{display:grid;grid-template-columns:1.2fr 2fr;gap:40px}
+.foot img{height:46px;width:auto}
+.foot dl{display:grid;grid-template-columns:80px 1fr;gap:6px 12px;margin:0}
+.foot dt{color:#fff;font-weight:700}
+.foot dd{margin:0}
+.foot-links{margin-top:28px;padding-top:20px;border-top:1px solid #2a3647;display:flex;gap:18px;flex-wrap:wrap}
+.foot-links a{color:#fff;font-weight:700;text-decoration:none}
+
+/* 스크롤 등장 */
+.rv.pre{opacity:0;transform:translateY(36px)}
+.rv{transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1)}
+@media (prefers-reduced-motion: reduce){
+  .rv,.rv.pre{opacity:1;transform:none;transition:none}
+  .hero-logo{transform:none;opacity:1}
+  html{scroll-behavior:auto}
+  .card,.quick a{transition:none}
+}
+
+/* 반응형 */
+@media (max-width:980px){
+  .grid4{grid-template-columns:repeat(3,1fr)}
+  .class-row,.info-grid,.space-grid{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}
+}
+@media (max-width:760px){
+  .wrap{padding:0 18px}
+  .grid4{grid-template-columns:repeat(2,1fr);gap:22px 14px}
+  .stats{grid-template-columns:1fr 1fr;gap:28px}
+  .class-row,.info-grid,.space-grid,.quick,.map-box,.foot{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .form-wrap{padding:24px 18px}
+  section.block{padding:64px 0}
+  .menu-btn{display:block}
+  .head-top{grid-template-columns:auto 1fr auto}
+  .logo-link{grid-column:2;justify-self:center}
+  .menu-btn{grid-column:1;grid-row:1}
+  nav.gnb{display:none}
+  nav.gnb.open{display:block}
+  nav.gnb ul{flex-direction:column;align-items:stretch;padding:8px 0 16px}
+  nav.gnb a{padding:14px 16px;font-size:1.05rem}
+  .cal .day{min-height:74px;padding:4px}
+  .ev{font-size:.66rem;padding:2px 4px}
+  .cal-item{grid-template-columns:1fr;gap:6px}
+  .notice button{grid-template-columns:44px 1fr;}
+  .notice .dt{grid-column:2;text-align:left}
+  .notice .body{padding-left:56px}
+  .avatar{width:46px;height:46px;left:8px;bottom:8px}
+  .btn-text{padding:6px 10px}
+  .dots i{transform:scale(.55)}
+}
+
+.cta-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.big-cta{font-size:1.1rem;padding:18px 32px;min-height:60px}
+.cta-note{color:var(--muted)}
+.sub-title{font-size:1.3rem;font-weight:800;margin:56px 0 18px}
+.link-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.badge.fee{background:#dff1f3;color:#005c66}
+.rules{background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px 30px;margin-top:8px}
+.rules h4{margin:0 0 10px;font-size:1.05rem}
+.rules ul{margin:0;padding-left:1.2em;display:grid;gap:6px;color:#38424f}
+.rules .note{font-size:.82rem;color:var(--muted);margin:12px 0 0}
+.guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:820px}
+@media (max-width:760px){.guide-grid{grid-template-columns:1fr}}
+.fee-table{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fee-row{display:flex;justify-content:space-between;gap:12px;background:var(--soft);border-radius:14px;padding:14px 18px}
+.fee-row b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.fee-note{color:var(--muted);font-size:.85rem;margin:10px 0 0}
+.forms-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.form-file{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;padding:16px 18px;border:1px solid var(--line);border-radius:16px;text-decoration:none;background:#fff}
+.form-file:hover{border-color:var(--c-teal)}
+.form-file .ext{width:52px;height:52px;border-radius:12px;background:#e3f1f3;color:var(--t-teal);display:grid;place-items:center;font-weight:800;font-size:.78rem}
+.form-file small{display:block;color:var(--muted);font-size:.82rem}
+.form-file .dl{font-size:1.3rem;color:var(--t-teal);font-weight:800}
+@media (max-width:760px){.fee-table,.forms-list{grid-template-columns:1fr}}
+.apply-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:900px}
+.apply-card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.apply-card h3{font-size:1.3rem}
+.apply-card p{margin:0;color:var(--muted)}
+.apply-card .apply-meta{color:var(--ink)}
+.apply-card .btn[aria-disabled="true"]{background:#d9dde3;color:#59616d;pointer-events:none}
+@media (max-width:760px){.apply-grid{grid-template-columns:1fr}}
+.film-band{background:#0f1724;color:#eef2f7}
+.film-band .sec-lead,.film-band .card-desc{color:#a9b4c3}
+.film-band .eyebrow,.film-band .more{color:#9cc8f0}
+.film-hero{background:#0f1724;color:#fff;border-bottom:0}
+.film-hero p{color:#b6c0cd}
+.film-hero .eyebrow{color:#9cc8f0}
+.film-page .chip{background:transparent;color:#eef2f7;border-color:#34425a}
+.film-page .chip[aria-pressed="true"]{background:#fff;color:#0f1724;border-color:#fff}
+.film-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:34px 26px}
+.film-card{display:block;text-decoration:none;color:inherit}
+.film-card .thumb{aspect-ratio:16/9;border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.film-card .thumb img{transition:transform .5s}
+.film-card:hover .thumb img{transform:scale(1.04)}
+.film-card h3{font-size:1.25rem;margin-top:16px}
+.film-card .prog{display:inline-block;margin-top:8px;font-size:.78rem;font-weight:700;color:#0f1724;background:#9cc8f0;border-radius:999px;padding:3px 10px}
+.film-card p{color:#a9b4c3;margin:8px 0 0;font-size:.92rem}
+@media (max-width:760px){.film-grid{grid-template-columns:1fr}}
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.rules-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">본문 바로가기</a>
+<div class="demo-bar" id="demoBar">미리보기 화면입니다. 소상공인과 실적 숫자는 예시이고, 관리자 페이지를 연결하면 실제 내용으로 바뀌어요.</div>
+
+<header class="site" id="siteHeader">
+  <div class="wrap">
+    <div class="head-top">
+      <button class="menu-btn" id="menuBtn" aria-label="메뉴 열기" aria-expanded="false" aria-controls="gnb"><span></span><span></span><span></span></button>
+      <a class="logo-link" href="#home" aria-label="부안미디어센터 처음으로"><img id="logoTop" src="logo.png" alt="부안미디어센터"></a>
+      <div class="head-tools">
+        <button class="btn-text" id="bigText" aria-pressed="false">글자 크게</button>
+      </div>
+    </div>
+    <nav class="gnb" id="gnb" aria-label="주 메뉴">
+      <ul>
+        <li data-c="orange"><a href="#edu">미디어 교육</a></li>
+        <li data-c="green"><a href="#mall" class="js-mall-name">소상공인 라이브커머스</a></li>
+        <li data-c="navy"><a href="#film">군민 제작 영화</a></li>
+        <li data-c="pink"><a href="#video">유튜브</a></li>
+        <li data-c="teal"><a href="#rent">시설·장비</a></li>
+        <li data-c="purple"><a href="#news">소식·문의</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+
+<!-- ========== 홈 ========== -->
+<div class="page" data-page="home">
+  <section class="hero" id="hero">
+    
+    <div class="wrap">
+      <img class="hero-logo" id="logoHero" src="logo.png" alt="부안미디어센터">
+      <h1 id="heroTitle">배우고, 찍고, 나누는<br><span class="grad">부안의 미디어 놀이터</span></h1>
+      <p id="heroSub">스마트폰 촬영부터 라이브커머스까지, 군민 누구나 배울 수 있어요. 스튜디오와 장비를 빌려 직접 만들어 볼 수도 있어요.</p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#edu">이번 달 수업 보기</a>
+        <a class="btn ghost" href="#edu-apply">교육 신청 안내</a>
+      </div>
+    </div>
+    <div class="pal-ground" data-pals="0,1" aria-hidden="false"></div>
+  </section>
+
+  <section class="block soft" data-c="orange">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">교육</div><h2 class="sec-title">이번 달 수업</h2><p class="sec-lead">지금 모집하거나 진행 중인 수업이에요. 눌러서 일정과 교육비를 확인하세요.</p></div>
+        <a class="more" href="#edu">수업 달력 전체 보기</a>
+      </div>
+      <div class="class-row" id="homeClasses"></div>
+    </div>
+  </section>
+
+  <section class="block" data-c="green">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">소상공인 라이브커머스</div><h2 class="sec-title">라이브커머스로 만나는 우리 동네 가게</h2><p class="sec-lead">미디어센터 소상공인 라이브커머스 교육에 참여한 부안의 가게들이에요. 가게를 누르면 스마트스토어나 블로그로 바로 이동해요.</p></div>
+        <a class="more" href="#mall">전체 보기</a>
+      </div>
+      <div class="grid4" id="homeMall"></div>
+    </div>
+  </section>
+
+  <section class="block film-band" data-c="navy">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">군민 제작 영화</div><h2 class="sec-title">카메라에 담은 부안의 이야기</h2><p class="sec-lead">미디어센터 영화 교육에서 군민들이 직접 기획하고 찍고 편집한 작품이에요.</p></div>
+        <a class="more" href="#film">작품 모두 보기</a>
+      </div>
+      <div class="film-grid" id="homeFilm"></div>
+    </div>
+  </section>
+
+  <section class="block soft" data-c="pink">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">유튜브</div><h2 class="sec-title">유튜브로 보는 부안</h2><p class="sec-lead">부안미디어센터 유튜브 채널에 올라온 최신 영상이에요.</p></div>
+        <a class="more" href="#video">전체 보기</a>
+      </div>
+      <div class="grid4" id="homeVideo"></div>
+    </div>
+  </section>
+
+  <section class="block" data-c="navy">
+    <div class="wrap">
+      <div class="sec-head rv" style="justify-content:center;text-align:center"><div><h2 class="sec-title">숫자로 보는 올해의 미디어센터</h2></div></div>
+      <div class="stats rv" id="stats"></div>
+      <p class="note-small" id="statsNote"></p>
+    </div>
+  </section>
+
+  <section class="block soft">
+    <div class="wrap">
+      <div class="quick rv">
+        <a class="q1" href="#edu-apply"><b>미디어 교육 신청</b><span>온라인·방문 신청 방법을 확인해요</span></a>
+        <a class="q2" href="#rent"><b>시설·장비 이용</b><span>스튜디오 대관과 촬영 장비 대여 안내</span></a>
+        <a class="q3" href="#news-ask"><b>문의하기</b><span>궁금한 점은 언제든 남겨주세요</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" data-c="purple">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">소식</div><h2 class="sec-title">센터 소식</h2></div>
+        <a class="more" href="#news">전체 보기</a>
+      </div>
+      <div class="notice-list rv" id="homeNotice"></div>
+    </div>
+  </section>
+
+  <section class="block soft" data-c="navy" id="home-map">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">오시는 길</div><h2 class="sec-title">부안미디어센터 찾아오기</h2><p class="sec-lead js-addr"></p></div>
+        <a class="more js-map" href="#" target="_blank" rel="noopener">네이버 지도에서 길찾기</a>
+      </div>
+      <div class="map-frame rv js-mapframe"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== 센터 소개 ========== -->
+<div class="page" data-page="about" data-c="navy">
+  <div class="page-hero"><div class="wrap"><div class="eyebrow">이용 안내</div><h1>운영 시간과 오시는 길</h1></div></div>
+  <section class="block">
+    <div class="wrap">
+      <h2 class="sec-title rv" style="margin-bottom:28px">이용 안내</h2>
+      <div class="info-grid rv" id="aboutInfo"></div>
+    </div>
+  </section>
+  <section class="block soft">
+    <div class="wrap">
+      <h2 class="sec-title rv" style="margin-bottom:28px">공간 안내</h2>
+      <div class="space-grid" id="spaceGrid"></div>
+    </div>
+  </section>
+  <section class="block" id="about-map">
+    <div class="wrap">
+      <h2 class="sec-title rv" style="margin-bottom:28px">오시는 길</h2>
+      <div class="map-frame rv js-mapframe"></div>
+      <div class="map-box rv" id="mapBox"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== 교육 ========== -->
+<!-- ========== 교육 ========== -->
+<div class="page" data-page="edu" data-c="orange">
+  <div class="page-hero"><div class="wrap"><div class="eyebrow">미디어 교육</div><h1>수업 달력</h1><p>센터에서 열리는 수업을 한눈에 볼 수 있어요. 수업을 누르면 일정과 교육비를 확인할 수 있어요.</p></div></div>
+  <section class="block">
+    <div class="wrap">
+      <div class="cal-bar">
+        <div class="cal-nav">
+          <button class="icon-btn" id="calPrev" aria-label="이전 달">‹</button>
+          <h2 id="calTitle" aria-live="polite"></h2>
+          <button class="icon-btn" id="calNext" aria-label="다음 달">›</button>
+        </div>
+        <div class="seg" role="group" aria-label="보기 방식">
+          <button id="viewCal" aria-pressed="true">달력</button>
+          <button id="viewList" aria-pressed="false">목록</button>
+        </div>
+      </div>
+      <div id="calArea"></div>
+      <div class="legend"><span class="st st-모집중">모집중</span><span class="st st-진행중">진행중</span><span class="st st-마감">마감</span></div>
+    </div>
+  </section>
+  <section class="block soft" id="edu-apply">
+    <div class="wrap">
+      <div class="eyebrow">교육 신청</div>
+      <h2 class="sec-title" style="margin-bottom:12px">미디어 교육 신청 안내</h2>
+      <p class="sec-lead" style="margin:0 0 32px" id="eduApplyLead"></p>
+      <div class="apply-grid">
+        <div class="apply-card">
+          <span class="st" id="onlineState"></span>
+          <h3>온라인 신청</h3>
+          <p>모집 인원의 절반을 온라인으로 받아요. 신청과 교육비 결제를 한 번에 할 수 있어요.</p>
+          <a class="btn color" id="eduApplyBtn" href="#" target="_blank" rel="noopener">온라인으로 신청하기</a>
+        </div>
+        <div class="apply-card">
+          <span class="st st-진행중">방문 접수</span>
+          <h3>센터 방문 신청</h3>
+          <p>나머지 절반은 센터에 직접 오셔서 신청해요. 교육 수강 신청서를 작성해 주세요.</p>
+          <p class="apply-meta"><b class="js-hours"></b><br>문의 <b class="js-phone"></b></p>
+        </div>
+      </div>
+      <p class="fee-note" style="margin-top:18px">예) 정원 12명인 수업은 온라인 6명, 방문 6명을 받아요. 교재비와 재료비는 본인 부담이에요. 감면 대상자는 증빙서류를 함께 내면 수강료를 감면받을 수 있어요(<a href="#rent-discount">감면 기준 보기</a>).</p>
+    </div>
+  </section>
+</div>
+
+<!-- ========== 시설·장비 ========== -->
+<div class="page" data-page="rent" data-c="teal">
+  <div class="page-hero"><div class="wrap"><div class="eyebrow">시설·장비</div><h1>스튜디오와 장비, 필요할 때 빌려 쓰세요</h1><p>스튜디오와 강의실은 부안군 통합예약에서, 카메라·조명 같은 장비는 공유누리에서 예약해요.</p></div></div>
+  <section class="block" id="rent-guide">
+    <div class="wrap">
+      <div class="sec-head"><div><h2 class="sec-title">이용 방법 안내 영상</h2><p class="sec-lead">예약하기 전에 영상으로 대관·대여 방법을 먼저 확인해 보세요.</p></div></div>
+      <div class="guide-grid" id="guideGrid"></div>
+    </div>
+  </section>
+  <section class="block soft">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><h2 class="sec-title">대관 가능 시설</h2><p class="sec-lead">1시간 미만은 1시간 요금으로 계산해요. 시설마다 이용 자격이 있는 분께 승인돼요.</p></div>
+        <a class="btn color" id="rentFacBtn" href="#" target="_blank" rel="noopener">시설 대관 예약하기</a>
+      </div>
+      <div class="space-grid" id="facGrid"></div>
+    </div>
+  </section>
+  <section class="block" id="rent-equip">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><h2 class="sec-title">대여 가능 장비</h2><p class="sec-lead">대여할 수 있는 장비와 예약 가능한 날짜는 공유누리에서 확인하고 바로 예약해요. 장비 대여는 센터 정회원이 이용할 수 있어요.</p></div>
+        <a class="btn color" id="rentEqBtn" href="#" target="_blank" rel="noopener">공유누리에서 장비 예약하기</a>
+      </div>
+      <div class="grid4" id="eqGrid"></div>
+      <div id="feeWrap"><h3 class="sub-title" style="margin-top:8px">장비 사용료 <small style="font-weight:600;color:var(--muted);font-size:.85rem">1일 기준</small></h3>
+      <div class="fee-table" id="feeBox"></div>
+      <p class="fee-note">장비마다 금액이 달라요. 정확한 금액은 공유누리 예약 화면에서 확인해 주세요.</p></div>
+      <h3 class="sub-title">장비 대여 순서</h3>
+      <ol class="steps">
+        <li><b>정회원 확인</b><span>장비 대여는 센터 정회원만 이용할 수 있어요</span></li>
+        <li><b>공유누리 예약</b><span>공유누리에서 장비와 날짜를 예약해요</span></li>
+        <li><b>신청서 제출</b><span>장비 사용 신청서와 준수사항에 서명해 센터에 내거나 이메일로 보내요</span></li>
+        <li><b>수령과 반납</b><span>예약한 날 센터에서 받고, 사용 후 반납해요</span></li>
+      </ol>
+      <h3 class="sub-title">이용 준수사항</h3>
+      <div class="rules-grid" id="rulesBox"></div>
+    </div>
+  </section>
+  <section class="block soft" id="rent-discount">
+    <div class="wrap">
+      <h2 class="sec-title" style="margin-bottom:12px">사용료 감면</h2>
+      <p class="sec-lead" style="margin:0 0 26px" id="discountNote"></p>
+      <div class="rules-grid" id="discountBox"></div>
+    </div>
+  </section>
+  <section class="block" id="rent-forms">
+    <div class="wrap">
+      <h2 class="sec-title" style="margin-bottom:12px">신청서 양식 내려받기</h2>
+      <p class="sec-lead" style="margin:0 0 26px">한글(HWP) 파일이에요. 작성해서 센터에 직접 내거나 <b class="js-email"></b>로 보내 주세요.</p>
+      <div class="forms-list" id="formsBox"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== 군민 제작 영화 ========== -->
+<div class="page film-page" data-page="film" data-c="navy">
+  <div class="page-hero film-hero"><div class="wrap"><div class="eyebrow">군민 제작 영화</div><h1>군민이 만든 부안 영화</h1><p>부안미디어센터 영화 교육에 참여한 군민들이 직접 기획하고, 촬영하고, 편집한 작품이에요. 누르면 유튜브에서 볼 수 있어요.</p></div></div>
+  <section class="block film-band">
+    <div class="wrap">
+      <div class="film-grid" id="filmGrid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== 소상공인 ========== -->
+<div class="page" data-page="mall" data-c="green">
+  <div class="page-hero"><div class="wrap"><div class="eyebrow">소상공인 라이브커머스</div><h1>부안 소상공인 라이브커머스</h1><p>부안미디어센터 소상공인 라이브커머스 교육에 참여한 우리 동네 가게들을 소개해요. 가게를 누르면 스마트스토어, 블로그, 유튜브로 바로 이동해요.</p></div></div>
+  <section class="block">
+    <div class="wrap">
+      <div class="chips" id="mallChips" role="group" aria-label="업종 고르기"></div>
+      <div class="grid4" id="mallGrid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== 영상 ========== -->
+<div class="page" data-page="video" data-c="pink">
+  <div class="page-hero"><div class="wrap"><div class="eyebrow">유튜브</div><h1>부안미디어센터 유튜브</h1><p>부안의 명소와 센터 소식, 교육 결과물을 영상으로 전해요. 누르면 유튜브에서 바로 볼 수 있어요.</p>
+    <div class="link-row" style="margin-top:22px"><a class="btn color" id="ytBtn" href="#" target="_blank" rel="noopener">유튜브 채널 구독하기</a></div></div></div>
+  <section class="block">
+    <div class="wrap">
+      <div class="chips" id="videoChips" role="group" aria-label="분류 고르기"></div>
+      <div class="grid4" id="videoGrid"></div>
+    </div>
+  </section>
+</div>
+
+<div class="page" data-page="news" data-c="purple">
+  <div class="page-hero"><div class="wrap"><div class="eyebrow">소식·문의</div><h1>공지사항</h1><p>수업 모집, 휴관 안내 등 센터 소식을 가장 먼저 알려드려요.</p></div></div>
+  <section class="block">
+    <div class="wrap"><div class="notice-list" id="noticeAll"></div></div>
+  </section>
+  <section class="block soft" id="news-ask">
+    <div class="wrap">
+      <div class="eyebrow">문의하기</div>
+      <h2 class="sec-title" style="margin-bottom:28px">무엇이든 물어보세요</h2>
+      <form class="form-wrap" id="formAsk" data-type="문의" novalidate>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
+        <div class="form-grid">
+          <div class="field"><label for="ask-name">이름<span class="req">*</span></label><input id="ask-name" name="이름" required></div>
+          <div class="field"><label for="ask-phone">연락처 또는 이메일<span class="req">*</span></label><input id="ask-phone" name="연락처" required></div>
+          <div class="field full"><label for="ask-type">문의 종류</label><select id="ask-type" name="문의유형"><option>교육</option><option>시설 대관</option><option>장비 대여</option><option>소상공인 라이브커머스</option><option>기타</option></select></div>
+          <div class="field full"><label for="ask-body">문의 내용<span class="req">*</span></label><textarea id="ask-body" name="문의내용" required></textarea></div>
+          <div class="field full agree"></div>
+        </div>
+        <div style="margin-top:22px"><button class="btn color" type="submit">문의 보내기</button></div>
+        <div class="form-msg" role="status"></div>
+      </form>
+    </div>
+  </section>
+</div>
+
+
+</main>
+
+<div class="pal-ground" data-pals="2,3"></div>
+<footer class="site">
+  <div class="wrap">
+    <div class="foot">
+      <div><img id="logoFoot" src="logo-white.png" alt="부안미디어센터"></div>
+      <dl id="footInfo"></dl>
+    </div>
+    <div class="foot-links">
+      <a href="#about">운영 시간·오시는 길</a>
+      <a href="#news-ask">문의하기</a>
+      <a id="footYt" href="#" target="_blank" rel="noopener">유튜브</a>
+      <a id="footIg" href="#" target="_blank" rel="noopener">인스타그램</a>
+      <a id="palsToggle" href="#" hidden>캐릭터 숨기기</a>
+    </div>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="defaults.js"></script>
+<script src="pixel-pals.js"></script>
+
+<div class="modal" id="classModal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal-box">
+    <button class="icon-btn modal-close" id="mClose" aria-label="닫기">×</button>
+    <span class="st" id="mStatus"></span>
+    <h3 id="mTitle"></h3>
+    <dl id="mInfo"></dl>
+    <a class="btn color" id="mApply" href="#edu-apply" style="--mcb:var(--c-orange);width:100%">신청 방법 보기</a>
+  </div>
+</div>
+
+<script>
+/* 설정과 기본 내용은 defaults.js, 관리 서버 주소는 config.js 에 있어요. */
+const SETTINGS = Object.assign({}, window.BMC_DEFAULTS.settings);
+let DATA = JSON.parse(JSON.stringify(window.BMC_DEFAULTS.data));
+
+/* =====================================================================
+   아래부터는 화면을 그리는 코드예요. 수정하지 않아도 돼요.
+   ===================================================================== */
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const PALETTE = ["#E08020","#70A030","#004070","#D05080","#008090","#8060A0"];
+const pick = s => PALETTE[[...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0) % PALETTE.length];
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const TODAY = new Date();
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const TODAY_S = ymd(TODAY);
+const DOW = ["일","월","화","수","목","금","토"];
+const fmtDate = s => { const d = new Date(s+"T00:00:00"); return isNaN(d) ? s : `${d.getMonth()+1}월 ${d.getDate()}일 (${DOW[d.getDay()]})`; };
+const short = s => { const d = new Date(s+"T00:00:00"); return isNaN(d) ? s : `${d.getMonth()+1}.${d.getDate()}`; };
+const uniq = a => [...new Set(a.filter(Boolean))];
+
+function fixImg(u){
+  u = String(u||"").trim();
+  const m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
+  return m ? `https://lh3.googleusercontent.com/d/${m[1]}` : u;
+}
+function placeholder(label, sub, color){
+  const c = color || pick(label);
+  return `<div class="ph" style="background:linear-gradient(135deg, ${c}, ${c}cc)"><div>${esc(label)}${sub?`<small>${esc(sub)}</small>`:""}</div></div>`;
+}
+window.__ph = l => placeholder(l);
+window.__thumbFail = img => { if(img.dataset.local){ const u = img.dataset.local; img.dataset.local = ""; img.src = u; } else img.outerHTML = placeholder("영상"); };
+function imgOr(src, label, sub){
+  src = fixImg(src);
+  if(!src) return placeholder(label, sub);
+  return `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.outerHTML=window.__ph(${esc(JSON.stringify(label))})">`;
+}
+
+/* ---------- 수업: 기간·요일 → 날짜별 회차 ---------- */
+function status(c){
+  if(c.applyStart && c.applyEnd && TODAY_S >= c.applyStart && TODAY_S <= c.applyEnd) return "모집중";
+  if(TODAY_S >= c.start && TODAY_S <= c.end) return "진행중";
+  if(TODAY_S < (c.applyStart || c.start)) return "모집예정";
+  return "마감";
+}
+function sessions(){
+  const out = [];
+  DATA.classes.forEach((c, i) => {
+    c._i = i; c._st = status(c);
+    const want = String(c.days||"").split(/[,\s·]+/).map(d=>DOW.indexOf(d.replace("요일",""))).filter(n=>n>=0);
+    const d = new Date(c.start+"T00:00:00"), end = new Date((c.end||c.start)+"T00:00:00");
+    if(isNaN(d)) return;
+    for(let t = new Date(d); t <= end; t.setDate(t.getDate()+1)){
+      if(!want.length || want.includes(t.getDay())) out.push({c, date: ymd(t)});
+    }
+  });
+  return out;
+}
+const stClass = s => s==="모집예정" ? "모집중" : s;
+
+/* ---------- 카드 ---------- */
+function mallCard(m){
+  const label = m.name.replace(/^예시\)\s*/,"");
+  const type = ["스마트스토어","블로그","유튜브","인스타그램"].includes(m.type) ? m.type : "기타";
+  return `<a class="card rv" href="${esc(m.link||"#")}" target="_blank" rel="noopener">
+    <div class="thumb">${imgOr(m.img, label, m.cat)}
+      <div class="avatar" style="background:${pick(m.name+"o")}">${m.owner?`<img src="${esc(fixImg(m.owner))}" alt="">`:esc((m.ownerName||label).slice(0,1))}</div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">${esc(m.name)}</div>
+      <div class="card-desc">${esc(m.desc)}</div>
+      <div class="badges"><span class="badge link lt-${type}">${esc(m.type||"바로가기")}</span>${m.cat?`<span class="badge">${esc(m.cat)}</span>`:""}</div>
+    </div></a>`;
+}
+function ytId(url){ const m = String(url||"").match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
+function videoCard(v){
+  const id = ytId(v.url);
+  const th = id ? `<img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy" data-local="thumbs/${id}.jpg" onerror="window.__thumbFail(this)">` : placeholder(v.cat||"영상");
+  return `<a class="card rv" href="${esc(v.url||SETTINGS.youtube)}" target="_blank" rel="noopener">
+    <div class="thumb wide">${th}<span class="play" aria-hidden="true"></span></div>
+    <div class="card-body">
+      <div class="card-title">${esc(v.title)}</div>
+      <div class="badges">${v.cat?`<span class="badge">${esc(v.cat)}</span>`:""}${v.date?`<span class="badge">${esc(v.date)}</span>`:""}</div>
+    </div></a>`;
+}
+function classCard(c){
+  return `<button class="class-card rv" data-cls="${c._i}">
+    <span class="st st-${stClass(c._st)}">${esc(c._st)}</span>
+    <span class="date">${short(c.start)} ~ ${short(c.end)}</span>
+    <h3>${esc(c.title)}</h3>
+    <span class="meta">매주 ${esc(c.days)} ${esc(c.time)}${c.fee?` · ${esc(c.fee)}`:""}</span>
+  </button>`;
+}
+function noticeItems(list, limit){
+  const sorted = [...list].sort((a,b)=> (b.pin?1:0)-(a.pin?1:0) || String(b.date).localeCompare(String(a.date)));
+  const rows = limit ? sorted.slice(0,limit) : sorted;
+  if(!rows.length) return `<div class="empty">등록된 공지가 없어요.</div>`;
+  let n = rows.filter(r=>!r.pin).length;
+  return rows.map(r => `<div class="notice">
+      <button aria-expanded="false">${r.pin?`<span class="pin">중요</span>`:`<span class="no">${n--}</span>`}<span class="t">${esc(r.title)}</span><span class="dt">${esc(r.date)}</span></button>
+      <div class="body">${esc(r.body)}${r.link?`\n\n<a href="${esc(r.link)}" target="_blank" rel="noopener">첨부 / 관련 링크 열기</a>`:""}</div>
+    </div>`).join("");
+}
+function chips(el, cats, onPick){
+  el.hidden = cats.length < 2;
+  el.innerHTML = ["전체", ...cats].map((c,i)=>`<button class="chip" aria-pressed="${i===0}">${esc(c)}</button>`).join("");
+  $$(".chip", el).forEach(b => b.addEventListener("click", () => {
+    $$(".chip", el).forEach(x=>x.setAttribute("aria-pressed","false"));
+    b.setAttribute("aria-pressed","true"); onPick(b.textContent);
+  }));
+}
+
+/* ---------- 달력 ---------- */
+let calMonth = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+let calView = innerWidth < 760 ? "list" : "cal";
+function renderCal(){
+  const y = calMonth.getFullYear(), m = calMonth.getMonth();
+  $("#calTitle").textContent = `${y}년 ${m+1}월`;
+  $("#viewCal").setAttribute("aria-pressed", calView==="cal");
+  $("#viewList").setAttribute("aria-pressed", calView==="list");
+  const key = `${y}-${String(m+1).padStart(2,"0")}`;
+  const items = sessions().filter(s => s.date.startsWith(key)).sort((a,b)=>(a.date+a.c.time).localeCompare(b.date+b.c.time));
+  const area = $("#calArea");
+  if(calView === "list"){
+    area.innerHTML = items.length ? `<div class="cal-list">${items.map(s=>`
+      <button class="cal-item" data-cls="${s.c._i}">
+        <span class="d">${fmtDate(s.date)}<small>${esc(s.c.time)}</small></span>
+        <span><b>${esc(s.c.title)}</b><br><span style="color:var(--muted);font-size:.88rem">${short(s.c.start)}~${short(s.c.end)} · ${esc(s.c.fee||"")}</span></span>
+        <span class="st st-${stClass(s.c._st)}">${esc(s.c._st)}</span>
+      </button>`).join("")}</div>` : `<div class="empty">이 달에는 등록된 수업이 없어요.</div>`;
+    return;
+  }
+  const startDow = new Date(y, m, 1).getDay(), days = new Date(y, m+1, 0).getDate(), prevDays = new Date(y, m, 0).getDate();
+  let html = DOW.map(d=>`<div class="dow">${d}</div>`).join("");
+  const total = Math.ceil((startDow + days)/7)*7;
+  for(let i=0;i<total;i++){
+    const dn = i - startDow + 1;
+    if(dn < 1 || dn > days){ html += `<div class="day out"><span class="n">${dn<1 ? prevDays+dn : dn-days}</span></div>`; continue; }
+    const k = `${key}-${String(dn).padStart(2,"0")}`;
+    const evs = items.filter(s=>s.date===k);
+    html += `<div class="day${k===TODAY_S?" today":""}"><span class="n">${dn}</span>${evs.map(s=>`<button class="ev s-${stClass(s.c._st)}" data-cls="${s.c._i}" title="${esc(s.c.title)}">${esc(s.c.time.split("~")[0])} ${esc(s.c.title)}</button>`).join("")}</div>`;
+  }
+  area.innerHTML = `<div class="cal">${html}</div>`;
+}
+
+/* ---------- 모달 ---------- */
+let lastFocus = null;
+function openClass(i){
+  const c = DATA.classes[i]; if(!c) return;
+  lastFocus = document.activeElement;
+  $("#mStatus").className = `st st-${stClass(c._st)}`; $("#mStatus").textContent = c._st;
+  $("#mTitle").textContent = c.title;
+  $("#mInfo").innerHTML = [["기간",`${fmtDate(c.start)} ~ ${fmtDate(c.end)}`],["시간",`매주 ${c.days} ${c.time}`],["횟수",c.count],["교육비",c.fee],["정원",c.cap],["접수",c.applyStart?`${short(c.applyStart)} ~ ${short(c.applyEnd)}`:""],["문의",SETTINGS.phone]]
+    .filter(r=>r[1]).map(r=>`<dt>${r[0]}</dt><dd>${esc(r[1])}</dd>`).join("");
+  const a = $("#mApply");
+  const can = c._st === "모집중" || c._st === "모집예정";
+  const online = !!SETTINGS.eduOnlineOpen && !!(c.link || SETTINGS.eduApply);
+  if(online){ a.href = c.link || SETTINGS.eduApply; a.target = "_blank"; a.textContent = can ? "온라인으로 신청하기" : "자세히 보기"; a.onclick = null; }
+  else { a.href = "#edu-apply"; a.removeAttribute("target"); a.textContent = "신청 방법 보기"; a.onclick = () => closeModal(); }
+  $("#classModal").classList.add("show"); $("#mClose").focus();
+}
+function closeModal(){ $("#classModal").classList.remove("show"); lastFocus && lastFocus.focus(); }
+
+/* ---------- 문의 폼 ---------- */
+function agreeHTML(){
+  return `<details><summary>개인정보 수집·이용 안내 (펼쳐 보기)</summary>
+    <p style="margin:10px 0 0">수집 항목: 이름, 연락처 등 문의서에 적은 내용<br>이용 목적: 문의 답변 연락<br>
+    보유 기간: 목적 달성 후 1년 뒤 파기(센터 지침에 따라 바뀔 수 있어요)<br>동의하지 않을 수 있으나, 이 경우 문의가 접수되지 않아요.</p></details>
+    <label><input type="checkbox" name="개인정보동의" value="동의" required> 개인정보 수집·이용에 동의합니다 <span style="color:#c0392b">*</span></label>`;
+}
+function setupForm(form){
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const msg = $(".form-msg", form); msg.className = "form-msg";
+    const missing = $$("[required]", form).filter(el => el.type==="checkbox" ? !el.checked : !String(el.value).trim());
+    if(missing.length){
+      msg.textContent = missing.length===1 && missing[0].type==="checkbox" ? "개인정보 수집·이용에 동의해 주세요." : "별표(*) 표시된 칸을 모두 채워 주세요.";
+      msg.classList.add("show","err"); missing[0].focus(); return;
+    }
+    const data = {"신청종류": form.dataset.type, "접수시각": new Date().toLocaleString("ko-KR")};
+    for(const [k,v] of new FormData(form).entries()) data[k] = v;
+    if(!endpoint()){
+      msg.textContent = `미리보기 화면이라 실제로 전송되지는 않았어요. 급한 문의는 ${SETTINGS.phone}로 전화 주세요.`;
+      msg.classList.add("show","info"); return;
+    }
+    const btn = $("button[type=submit]", form); btn.disabled = true; btn.textContent = "보내는 중…";
+    try{
+      const r = await fetch(endpoint(), {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({action:"inquiry", data})});
+      const j = await r.json();
+      if(!j.ok){ msg.textContent = j.error || "전송하지 못했어요."; msg.classList.add("show","err"); return; }
+      msg.textContent = "잘 접수되었어요. 확인하고 연락드릴게요."; msg.classList.add("show","ok"); form.reset();
+    }catch(err){
+      msg.textContent = `전송하지 못했어요. 잠시 후 다시 시도하거나 ${SETTINGS.phone}로 전화 주세요.`; msg.classList.add("show","err");
+    }finally{ btn.disabled = false; btn.textContent = "문의 보내기"; }
+  });
+}
+
+/* ---------- 그리기 ---------- */
+function setHref(sel, url){ $$(sel).forEach(a => { if(url){ a.href = url; a.hidden = false; } else a.hidden = true; }); }
+function renderAll(){
+  sessions();
+  const mall = DATA.mall.filter(m=>m.show!==false);
+  const vids = DATA.videos.filter(v=>v.show!==false);
+  const order = {"모집중":0,"모집예정":1,"진행중":2,"마감":3};
+  const homeCls = DATA.classes.filter(c=>c._st!=="마감").sort((a,b)=>order[a._st]-order[b._st] || a.start.localeCompare(b.start));
+
+  if(SETTINGS.logo) $$("#logoTop,#logoHero").forEach(i=>i.src=fixImg(SETTINGS.logo));
+  if(SETTINGS.logoDark) $("#logoFoot").src = fixImg(SETTINGS.logoDark);
+  const [t1,t2] = SETTINGS.heroTitle.split("|");
+  $("#heroTitle").innerHTML = `${esc(t1)}${t2?`<br><span class="grad">${esc(t2)}</span>`:""}`;
+  $("#heroSub").textContent = SETTINGS.heroSub;
+  $$(".js-phone").forEach(e=>e.textContent = SETTINGS.phone);
+  if(SETTINGS.mallName) $$(".js-mall-name").forEach(e=>e.textContent = SETTINGS.mallName);
+  
+  setHref("#rentFacBtn", SETTINGS.rentFacility); setHref("#rentEqBtn", SETTINGS.rentEquip);
+  $$(".js-email").forEach(e=>e.textContent = SETTINGS.email);
+  setHref("#ytBtn,#footYt", SETTINGS.youtube); setHref("#footIg", SETTINGS.instagram); setHref(".js-map", SETTINGS.mapLink);
+
+  // 홈
+  $("#homeClasses").innerHTML = homeCls.slice(0,3).map(classCard).join("") || `<div class="empty">지금 열리는 수업이 없어요.</div>`;
+  $("#homeMall").innerHTML = mall.slice(0,4).map(mallCard).join("");
+  $("#homeVideo").innerHTML = vids.slice(0,4).map(videoCard).join("");
+  $("#homeNotice").innerHTML = noticeItems(DATA.notices, 5);
+  $("#homeNotice").closest("section").hidden = !DATA.notices.length;
+  $("#stats").innerHTML = SETTINGS.stats.map(s=>`<div class="stat"><b data-to="${s[1]}">${Number(s[1]).toLocaleString()}</b><span>${esc(s[0])} (${esc(s[2])})</span></div>`).join("");
+  $("#statsNote").textContent = SETTINGS.statsNote || "";
+
+  // 소개
+  $("#aboutInfo").innerHTML = [
+    ["운영 시간", `${esc(SETTINGS.hours)}<br>${esc(SETTINGS.closed)}`],
+    ["문의 전화", esc(SETTINGS.phone)],
+    ["운영", `${esc(SETTINGS.operator)}<br>(부안군 직영)`]
+  ].map(r=>`<div class="info"><h3>${r[0]}</h3><p>${r[1]}</p></div>`).join("");
+  $("#spaceGrid").innerHTML = DATA.facilities.map(facCard).join("");
+  $("#mapBox").innerHTML = `<dl><dt>주소</dt><dd>${esc(SETTINGS.address)}</dd><dt>전화</dt><dd>${esc(SETTINGS.phone)}</dd><dt>이메일</dt><dd>${esc(SETTINGS.email)}</dd></dl>
+    <dl><dt>운영</dt><dd>${esc(SETTINGS.hours)}</dd><dt>휴관</dt><dd>${esc(SETTINGS.closed)}</dd><dt>지도</dt><dd><a class="btn ghost js-map" href="${esc(SETTINGS.mapLink)}" target="_blank" rel="noopener" style="min-height:44px;padding:10px 18px">네이버 지도에서 보기</a></dd></dl>`;
+
+  // 지도
+  const lat = SETTINGS.mapLat, lng = SETTINGS.mapLng;
+  $$(".js-mapframe").forEach(box => {
+    box.innerHTML = `<div class="map-fallback"><div>지도를 불러오는 중이에요.<br><a class="btn ghost js-map" style="margin-top:14px" href="${esc(SETTINGS.mapLink)}" target="_blank" rel="noopener">네이버 지도에서 보기</a></div></div>` +
+      (lat && lng ? `<iframe title="부안미디어센터 위치 지도" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${encodeURIComponent(lat+","+lng)}&hl=ko&z=16&output=embed"></iframe>` : "");
+  });
+  $$(".js-addr").forEach(e => e.textContent = `${SETTINGS.address} · ${SETTINGS.phone}`);
+
+  // 시설·장비
+  $("#facGrid").innerHTML = DATA.facilities.map(facCard).join("");
+  const guides = [["시설 대관 방법", SETTINGS.facGuide],["장비 대여 방법", SETTINGS.equipGuide]].filter(g=>g[1]);
+  $("#rent-guide").hidden = !guides.length;
+  $("#guideGrid").innerHTML = guides.map(([t,u]) => videoCard({title:`부안미디어센터 ${t} 안내`, url:u, cat:"안내 영상"})).join("");
+  $("#eqGrid").hidden = !DATA.equipment.length;
+  $("#eqGrid").innerHTML = DATA.equipment.map(q=>`<div class="card rv"><div class="thumb">${imgOr(q.img, q.name)}</div><div class="card-body"><div class="card-title">${esc(q.name)}</div><div class="card-desc">${esc(q.desc)}</div></div></div>`).join("");
+
+  const R = DATA.rules || {};
+  $("#rulesBox").innerHTML = [["시설 대관", R.facility],["장비 대여", R.equip]].filter(x=>x[1]&&x[1].length)
+    .map(([k,list])=>`<div class="rules"><h4>${k}</h4><ul>${list.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`).join("") + (R.note?`<p class="note" style="grid-column:1/-1;color:var(--muted);font-size:.85rem;margin:0">${esc(R.note)}</p>`:"");
+
+  const fees = (R.equipFees||[]).map(l => l.split("|"));
+  $("#feeWrap").hidden = !fees.length;
+  $("#feeBox").innerHTML = fees.map(([n,p]) => `<div class="fee-row"><span>${esc(n)}</span><b>${esc(p||"")}</b></div>`).join("");
+  $("#rent-discount").hidden = !((R.discountFree||[]).length || (R.discountHalf||[]).length);
+  $("#discountNote").textContent = R.discountNote || "";
+  $("#discountBox").innerHTML = [["전액 면제", R.discountFree],["50% 이내 감면", R.discountHalf]].filter(x=>x[1]&&x[1].length)
+    .map(([k,list])=>`<div class="rules"><h4>${k}</h4><ul>${list.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`).join("");
+  const forms = DATA.forms || [];
+  $("#rent-forms").hidden = !forms.length;
+  $("#formsBox").innerHTML = forms.map(f => `<a class="form-file" href="${esc(f.url)}" download target="_blank" rel="noopener">
+      <span class="ext">${esc((String(f.url).match(/\.(\w+)(?:\?|$)/)||[,"FILE"])[1].toUpperCase())}</span>
+      <span><b>${esc(f.title)}</b><small>${esc(f.desc||"")}</small></span><span class="dl" aria-hidden="true">↓</span></a>`).join("");
+
+  // 군민 제작 영화
+  const films = (DATA.films||[]).filter(f=>f.show!==false);
+  $("#homeFilm").innerHTML = films.slice(0,2).map(filmCard).join("");
+  $("#homeFilm").closest("section").hidden = !films.length;
+  $("#filmGrid").innerHTML = films.map(filmCard).join("") || `<div class="empty">등록된 작품이 없어요.</div>`;
+
+  // 교육 신청
+  const open = !!SETTINGS.eduOnlineOpen && !!SETTINGS.eduApply;
+  $("#eduApplyLead").textContent = SETTINGS.eduApplyNote || "";
+  $("#onlineState").className = "st " + (open ? "st-모집중" : "st-마감");
+  $("#onlineState").textContent = open ? "신청 가능" : "준비 중";
+  const eb = $("#eduApplyBtn");
+  eb.href = open ? SETTINGS.eduApply : "#edu-apply";
+  eb.textContent = open ? "온라인으로 신청하기" : "온라인 신청 준비 중";
+  eb.setAttribute("aria-disabled", open ? "false" : "true");
+  $$(".js-hours").forEach(e=>e.textContent = `${SETTINGS.hours} (${SETTINGS.closed})`);
+
+  // 라이브커머스
+  const drawMall = cat => { $("#mallGrid").innerHTML = mall.filter(m=>cat==="전체"||m.cat===cat).map(mallCard).join("") || `<div class="empty">등록된 가게가 없어요.</div>`; reveal(); };
+  chips($("#mallChips"), uniq(mall.map(m=>m.cat)), drawMall); drawMall("전체");
+  // 영상
+  const drawVid = cat => { $("#videoGrid").innerHTML = vids.filter(v=>cat==="전체"||v.cat===cat).map(videoCard).join("") || `<div class="empty">등록된 영상이 없어요.</div>`; reveal(); };
+  chips($("#videoChips"), uniq(vids.map(v=>v.cat)), drawVid); drawVid("전체");
+  // 공지
+  $("#noticeAll").innerHTML = noticeItems(DATA.notices);
+  // 푸터
+  $("#footInfo").innerHTML = `<dt>주소</dt><dd>${esc(SETTINGS.address)}</dd><dt>전화</dt><dd>${esc(SETTINGS.phone)}</dd><dt>이메일</dt><dd>${esc(SETTINGS.email)}</dd><dt>운영시간</dt><dd>${esc(SETTINGS.hours)} · ${esc(SETTINGS.closed)}</dd><dt>운영</dt><dd>${esc(SETTINGS.operator)}</dd>`;
+
+  renderCal();
+}
+function filmCard(f){
+  const id = ytId(f.url);
+  const th = id ? `<img src="https://i.ytimg.com/vi/${id}/maxresdefault.jpg" alt="" loading="lazy" data-hq="https://i.ytimg.com/vi/${id}/hqdefault.jpg" data-local="thumbs/${id}.jpg" onerror="window.__filmFail(this)">` : placeholder(f.title);
+  return `<a class="film-card rv" href="${esc(f.url||SETTINGS.youtube)}" target="_blank" rel="noopener">
+    <div class="thumb wide">${th}<span class="play" aria-hidden="true"></span></div>
+    <h3>${esc(f.title)}</h3>${f.desc?`<p>${esc(f.desc)}</p>`:""}</a>`;
+}
+window.__filmFail = img => { if(img.dataset.hq){ const u = img.dataset.hq; img.dataset.hq = ""; img.src = u; } else window.__thumbFail(img); };
+function facCard(f){
+  return `<div class="card rv"><div class="thumb wide">${imgOr(f.img, f.name)}</div><div class="card-body"><div class="card-title">${esc(f.name)}</div><div class="card-desc">${esc(f.desc)}</div>
+    <div class="badges">${f.size?`<span class="badge">${esc(f.size)}</span>`:""}${f.fee?`<span class="badge fee">${esc(f.fee)}</span>`:""}</div></div></div>`;
+}
+
+/* ---------- 라우팅 ---------- */
+const PAGES = ["home","about","edu","rent","mall","film","video","news"];
+function route(){
+  const h = (location.hash||"#home").slice(1);
+  const page = PAGES.find(p => h===p || h.startsWith(p+"-")) || "home";
+  $$(".page").forEach(p => p.classList.toggle("on", p.dataset.page===page));
+  $$("nav.gnb a").forEach(a => { if(a.getAttribute("href")==="#"+page) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  $("#gnb").classList.remove("open"); $("#menuBtn").setAttribute("aria-expanded","false");
+  const target = h!==page ? document.getElementById(h) : null;
+  requestAnimationFrame(()=>{
+    if(target){ const y = target.getBoundingClientRect().top + scrollY - $("#siteHeader").offsetHeight - 8; scrollTo({top:y, behavior: reduced?"auto":"smooth"}); }
+    else scrollTo({top:0});
+    reveal();
+  });
+}
+
+/* ---------- 스크롤 효과 ---------- */
+let io;
+function reveal(){
+  if(reduced || !("IntersectionObserver" in window)) return;
+  if(!io) io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.remove("pre"); countUp(e.target); io.unobserve(e.target);} }), {threshold:.12});
+  $$(".page.on .rv").forEach(el => {
+    if(el.dataset.seen) return; el.dataset.seen = 1;
+    if(el.getBoundingClientRect().top > innerHeight * .95){ el.classList.add("pre"); io.observe(el); }
+  });
+}
+function countUp(el){
+  $$("[data-to]", el).forEach(b => {
+    const to = +b.dataset.to, t0 = performance.now(), dur = 1300;
+    const step = t => { const p = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-p,3); b.textContent = Math.round(to*e).toLocaleString(); if(p<1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
+function onScroll(){
+  $("#siteHeader").classList.toggle("compact", scrollY > 30);
+  if(reduced) return;
+  const hero = $("#hero"); if(!hero || !hero.offsetParent) return;
+  hero.style.setProperty("--p", Math.min(1, Math.max(0, scrollY / (hero.offsetHeight*.8))).toFixed(3));
+}
+function dots(){
+  const box = $("#dots"); if(!box) return;
+  box.innerHTML = PALETTE.map((c,i)=>{ const s = 160 + (i*53)%180, x = (i*37+7)%92, y = (i*29+11)%80;
+    return `<i style="background:${c};width:${s}px;height:${s}px;left:${x}%;top:${y}%"></i>`; }).join("");
+}
+
+/* ---------- 외부 데이터(관리 시트/서버) ---------- */
+async function loadData(){
+  const api = window.BMC_API;
+  if(!api) return;
+  try{
+    const r = await fetch(api + (api.includes("?")?"&":"?") + "action=data", {cache:"no-store"});
+    const j = await r.json();
+    Object.assign(SETTINGS, j.settings || {});
+    Object.keys(DATA).forEach(k => { if(j[k] !== undefined) DATA[k] = j[k]; });
+    const bar = $("#demoBar"); bar && bar.remove();
+  }catch(e){ console.warn("관리 서버에서 내용을 불러오지 못해 기본 내용을 보여줘요.", e); }
+}
+const endpoint = () => window.BMC_API || "";
+
+/* ---------- 시작 ---------- */
+$$(".field.agree").forEach(el => el.innerHTML = agreeHTML());
+$$("form").forEach(setupForm);
+$("#menuBtn").addEventListener("click", e => { const o = $("#gnb").classList.toggle("open"); e.currentTarget.setAttribute("aria-expanded", o); });
+$("#bigText").addEventListener("click", e => {
+  const on = document.documentElement.classList.toggle("big"); e.currentTarget.setAttribute("aria-pressed", on);
+  try{ localStorage.setItem("bmc-big", on?"1":""); }catch(_){}
+});
+try{ if(localStorage.getItem("bmc-big")){ document.documentElement.classList.add("big"); $("#bigText").setAttribute("aria-pressed","true"); } }catch(_){}
+$("#calPrev").addEventListener("click", ()=>{ calMonth.setMonth(calMonth.getMonth()-1); renderCal(); });
+$("#calNext").addEventListener("click", ()=>{ calMonth.setMonth(calMonth.getMonth()+1); renderCal(); });
+$("#viewCal").addEventListener("click", ()=>{ calView="cal"; renderCal(); });
+$("#viewList").addEventListener("click", ()=>{ calView="list"; renderCal(); });
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-cls]"); if(c){ openClass(+c.dataset.cls); return; }
+  const n = e.target.closest(".notice > button"); if(n){ const o = n.parentElement.classList.toggle("open"); n.setAttribute("aria-expanded", o); }
+});
+$("#mClose").addEventListener("click", closeModal);
+$("#classModal").addEventListener("click", e => { if(e.target.id==="classModal") closeModal(); });
+document.addEventListener("keydown", e => { if(e.key==="Escape" && $("#classModal").classList.contains("show")) closeModal(); });
+addEventListener("hashchange", route);
+addEventListener("scroll", onScroll, {passive:true});
+
+dots();
+loadData().finally(()=>{ renderAll(); route(); onScroll(); window.BMC_SETTINGS = SETTINGS; window.BMC_startPals && window.BMC_startPals(); });
+</script>
+</body>
+</html>

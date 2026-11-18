@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>부안미디어센터 관리자</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+/* 관리자: 왼쪽 메뉴 + 오른쪽 목록. 큰 글씨와 큰 버튼으로 실수 없이 */
+:root{
+  --bg:#f5f5f7; --panel:#ffffff; --ink:#13233a; --muted:#5d6776; --line:#e1e4e9;
+  --accent:#004070; --ok:#2f7d32; --warn:#b8620e; --danger:#c0392b;
+  --font:"Pretendard","Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html{font-size:106.25%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;word-break:keep-all}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #E08020;outline-offset:2px;border-radius:6px}
+h1,h2,h3{margin:0;letter-spacing:-0.02em;text-wrap:balance}
+.hidden,[hidden]{display:none !important}
+.btn{border:0;border-radius:12px;padding:11px 18px;font-weight:700;cursor:pointer;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.ghost{background:#eceef2;color:var(--ink)}
+.btn.danger{background:#fdeaea;color:var(--danger)}
+.btn.small{min-height:38px;padding:7px 12px;font-size:.88rem;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* 로그인 */
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-box{background:var(--panel);border-radius:24px;padding:40px 36px;width:min(420px,100%);box-shadow:0 10px 40px rgba(0,0,0,.06)}
+.login-box img{height:44px;margin-bottom:18px}
+.login-box h1{font-size:1.4rem;margin-bottom:22px}
+
+/* 레이아웃 */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside{background:#111b29;color:#cfd6e0;padding:22px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+aside img{height:34px;background:#fff;border-radius:8px;padding:5px 8px;margin:0 6px 18px}
+aside nav{display:flex;flex-direction:column;gap:4px}
+aside nav button{background:none;border:0;text-align:left;padding:11px 14px;border-radius:10px;cursor:pointer;color:#cfd6e0;font-weight:600}
+aside nav button:hover{background:#1d2a3c}
+aside nav button[aria-current="true"]{background:#fff;color:var(--ink)}
+aside .sep{height:1px;background:#2a3647;margin:12px 6px}
+aside .side-foot{margin-top:18px;display:flex;flex-direction:column;gap:8px;padding:0 6px}
+aside .side-foot a,aside .side-foot button{color:#fff;font-size:.88rem;background:none;border:0;text-align:left;cursor:pointer;padding:6px 0;text-decoration:none}
+main{padding:32px clamp(18px,4vw,48px) 80px;max-width:1100px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.top h2{font-size:1.7rem;font-weight:800}
+.top p{margin:6px 0 0;color:var(--muted)}
+.save-state{font-size:.85rem;color:var(--muted)}
+.save-state.ok{color:var(--ok)} .save-state.err{color:var(--danger)}
+
+/* 목록 */
+.list{display:flex;flex-direction:column;gap:10px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:grid;grid-template-columns:auto 64px 1fr auto;gap:14px;align-items:center}
+.item.off{opacity:.55}
+.item .ord{display:flex;flex-direction:column;gap:4px}
+.item .ord button{width:34px;height:28px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-weight:800}
+.item .thumb{width:64px;height:64px;border-radius:12px;background:#eceef2 center/cover no-repeat;display:grid;place-items:center;color:#9aa3b0;font-size:.75rem;text-align:center}
+.item .tt{font-weight:700}
+.item .sub{color:var(--muted);font-size:.86rem}
+.item .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tag{display:inline-block;font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:999px;background:#eceef2;margin-right:4px}
+.tag.hide{background:#fdeaea;color:var(--danger)} .tag.pin{background:#efedff;color:#6a4c8c}
+.empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px;background:#fff}
+.help{background:#fff8ec;border:1px solid #f3e1bf;color:#6e4607;border-radius:14px;padding:12px 16px;font-size:.9rem;margin-bottom:18px}
+
+/* 폼 */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.f{display:flex;flex-direction:column;gap:6px}
+.f.full{grid-column:1/-1}
+.f label,.f .lb{font-weight:700;font-size:.92rem}
+.f .hint{font-size:.8rem;color:var(--muted)}
+.f input[type=text],.f input[type=url],.f input[type=date],.f input[type=number],.f input[type=password],.f select,.f textarea{border:1px solid #cdd2da;border-radius:12px;padding:11px 13px;background:#fff;min-height:46px;width:100%}
+.f textarea{min-height:110px;resize:vertical}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days label{border:1px solid #cdd2da;border-radius:999px;padding:6px 14px;cursor:pointer;font-weight:700;display:flex;gap:6px;align-items:center}
+.switch{display:flex;align-items:center;gap:10px;font-weight:700}
+.switch input{width:22px;height:22px}
+.img-field{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.img-prev{width:110px;height:110px;border-radius:14px;background:#eceef2 center/cover no-repeat;border:1px solid var(--line);display:grid;place-items:center;color:#9aa3b0;font-size:.8rem}
+.img-btns{display:flex;flex-direction:column;gap:8px;flex:1;min-width:200px}
+.stats-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
+
+/* 모달 */
+.modal{position:fixed;inset:0;background:rgba(10,20,35,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto;z-index:50}
+.modal.show{display:flex}
+.modal-box{background:#fff;border-radius:22px;padding:28px;width:min(760px,100%)}
+.modal-box h3{font-size:1.3rem;margin-bottom:18px}
+.modal-foot{display:flex;justify-content:space-between;gap:10px;margin-top:22px;flex-wrap:wrap}
+
+/* 문의 */
+.inq{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.inq.done{opacity:.6}
+.inq-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.inq-text{white-space:pre-line;margin:8px 0}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#13233a;color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;z-index:90;display:none}
+.toast.show{display:block}
+
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  aside{position:static;height:auto}
+  aside nav{flex-direction:row;flex-wrap:wrap}
+  .item{grid-template-columns:auto 52px 1fr}
+  .item .thumb{width:52px;height:52px}
+  .item .acts{grid-column:1/-1;justify-content:flex-start}
+  .fgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<section class="login" id="loginView">
+  <form class="login-box" id="loginForm">
+    <img src="logo.png" alt="부안미디어센터">
+    <h1>관리자 로그인</h1>
+    <div class="f" style="margin-bottom:14px"><label for="lid">아이디</label><input type="text" id="lid" autocomplete="username" required></div>
+    <div class="f" style="margin-bottom:20px"><label for="lpw">비밀번호</label><input type="password" id="lpw" autocomplete="current-password" required></div>
+    <button class="btn primary" style="width:100%" type="submit">로그인</button>
+    <p id="loginMsg" style="color:var(--danger);margin:14px 0 0;min-height:1.5em" role="alert"></p>
+    <p id="noApi" class="help hidden" style="margin-top:6px">아직 관리 서버가 연결되지 않았어요. config.js에 Apps Script 주소를 넣으면 로그인할 수 있어요.</p>
+  </form>
+</section>
+
+<!-- 관리 화면 -->
+<div class="app hidden" id="appView">
+  <aside>
+    <img src="logo.png" alt="부안미디어센터">
+    <nav id="sideNav" aria-label="관리 메뉴"></nav>
+    <div class="sep"></div>
+    <div class="side-foot">
+      <a href="./" target="_blank" rel="noopener">홈페이지 열기 ↗</a>
+      <button id="logoutBtn">로그아웃</button>
+    </div>
+  </aside>
+  <main id="mainArea"></main>
+</div>
+
+<div class="modal" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+  <form class="modal-box" id="editForm">
+    <h3 id="editTitle"></h3>
+    <div class="fgrid" id="editFields"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn danger" id="editDelete">삭제</button>
+      <div style="display:flex;gap:8px"><button type="button" class="btn ghost" id="editCancel">취소</button><button type="submit" class="btn primary">저장</button></div>
+    </div>
+  </form>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<input type="file" id="filePick" accept="image/*" class="hidden">
+
+<script src="config.js"></script>
+<script src="defaults.js"></script>
+<script>
+const API = window.BMC_API || "";
+const D = window.BMC_DEFAULTS;
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+let TOKEN = ""; try{ TOKEN = sessionStorage.getItem("bmc-token") || ""; }catch(_){}
+let STATE = {};
+
+/* ---------- 항목 정의 ---------- */
+const LINK_TYPES = ["스마트스토어","블로그","유튜브","인스타그램","기타"];
+const SECTIONS = {
+  mall: { title:"소상공인 라이브커머스", desc:"라이브커머스 교육에 참여한 가게를 등록해요. 카드를 누르면 '링크'로 이동해요.", add:"가게 추가",
+    fields:[
+      {k:"show",label:"홈페이지에 보이기",type:"bool",def:true},
+      {k:"name",label:"가게 이름",type:"text",req:true},
+      {k:"ownerName",label:"대표자 이름",type:"text",hint:"소상공인 사진이 없을 때 첫 글자가 동그라미에 나와요"},
+      {k:"cat",label:"업종",type:"text",list:"cats",hint:"필터 버튼 이름이 돼요. 예: 수산물, 농산물, 가공식품"},
+      {k:"desc",label:"한 줄 소개",type:"text",full:true},
+      {k:"img",label:"상품 사진",type:"image"},
+      {k:"owner",label:"소상공인 사진",type:"image",hint:"얼굴 사진은 게시 동의를 받고 올려 주세요"},
+      {k:"link",label:"이동할 링크",type:"url",req:true,full:true,hint:"스마트스토어, 블로그, 유튜브 주소 등"},
+      {k:"type",label:"링크 종류",type:"select",options:LINK_TYPES}
+    ], view:x=>({img:x.img, t:x.name, s:[x.cat,x.type].filter(Boolean).join(" · "), off:x.show===false}) },
+  films: { title:"군민 제작 영화", desc:"영화 교육에서 군민이 만든 작품이에요. 유튜브 주소만 넣으면 큰 썸네일이 나와요. 위에 있을수록 먼저 보여요.", add:"작품 추가",
+    fields:[
+      {k:"show",label:"홈페이지에 보이기",type:"bool",def:true},
+      {k:"url",label:"유튜브 주소",type:"url",req:true,full:true},
+      {k:"title",label:"작품 제목",type:"text",req:true,full:true},
+      {k:"desc",label:"짧은 소개(선택)",type:"text",full:true}
+    ], view:x=>({img: yt(x.url)?`https://i.ytimg.com/vi/${yt(x.url)}/default.jpg`:"", t:x.title, s:x.desc, off:x.show===false}) },
+  videos: { title:"유튜브", desc:"유튜브 탭에 나오는 영상이에요. 주소만 넣으면 썸네일이 자동으로 나와요. 위에 있을수록 먼저 보여요.", add:"영상 추가",
+    fields:[
+      {k:"show",label:"홈페이지에 보이기",type:"bool",def:true},
+      {k:"url",label:"유튜브 주소",type:"url",req:true,full:true,hint:"예: https://www.youtube.com/watch?v=… 또는 쇼츠 주소"},
+      {k:"title",label:"제목",type:"text",req:true,full:true},
+      {k:"cat",label:"분류(선택)",type:"text",list:"vcats",hint:"선택. 비워두거나 분류가 하나뿐이면 필터 버튼은 숨겨져요"},
+      {k:"date",label:"날짜(선택)",type:"date"}
+    ], view:x=>({img: yt(x.url)?`https://i.ytimg.com/vi/${yt(x.url)}/default.jpg`:"", t:x.title, s:x.cat, off:x.show===false}) },
+  notices: { title:"공지사항", desc:"'중요'로 표시하면 맨 위에 고정돼요.", add:"공지 쓰기",
+    fields:[
+      {k:"pin",label:"중요 공지(맨 위 고정)",type:"bool"},
+      {k:"title",label:"제목",type:"text",req:true,full:true},
+      {k:"date",label:"날짜",type:"date",req:true,def:()=>today()},
+      {k:"link",label:"첨부·관련 링크(선택)",type:"url"},
+      {k:"body",label:"내용",type:"textarea",full:true}
+    ], view:x=>({t:x.title, s:x.date, tags:x.pin?['<span class="tag pin">중요</span>']:[]}) },
+  classes: { title:"미디어 교육 일정", desc:"기간과 요일만 넣으면 수업 달력에 날짜별로 표시돼요. 모집 상태는 접수 기간으로 자동 계산돼요.", add:"수업 추가",
+    fields:[
+      {k:"title",label:"수업 이름",type:"text",req:true,full:true},
+      {k:"start",label:"교육 시작일",type:"date",req:true},
+      {k:"end",label:"교육 종료일",type:"date",req:true},
+      {k:"days",label:"요일",type:"days",full:true},
+      {k:"time",label:"시간",type:"text",hint:"예: 19:00~21:00"},
+      {k:"count",label:"횟수",type:"text",hint:"예: 6회"},
+      {k:"fee",label:"교육비",type:"text",hint:"예: 20,000원 / 무료"},
+      {k:"cap",label:"정원",type:"text",hint:"예: 12명"},
+      {k:"applyStart",label:"접수 시작일",type:"date"},
+      {k:"applyEnd",label:"접수 마감일",type:"date"},
+      {k:"link",label:"신청 링크(선택)",type:"url",full:true,hint:"비워두면 기본 설정의 '교육 신청 링크'로 연결돼요"}
+    ], view:x=>({t:x.title, s:`${x.start||""} ~ ${x.end||""} · ${x.days||""} ${x.time||""}`}) },
+  facilities: { title:"대관 가능 시설", desc:"시설·장비 빌리기 화면의 시설 목록이에요.", add:"시설 추가",
+    fields:[
+      {k:"name",label:"시설 이름",type:"text",req:true},
+      {k:"size",label:"면적",type:"text",hint:"예: 85㎡"},
+      {k:"fee",label:"사용료",type:"text",hint:"예: 1시간 10,000원"},
+      {k:"img",label:"사진",type:"image"},
+      {k:"desc",label:"설명",type:"text",full:true}
+    ], view:x=>({img:x.img, t:x.name, s:[x.size,x.fee].filter(Boolean).join(" · ")}) },
+  forms: { title:"신청서 양식", desc:"시설·장비 빌리기 화면 맨 아래 '신청서 양식 내려받기'에 나와요. 새 파일은 구글 드라이브에 올리고 공유 링크를 넣어요.", add:"양식 추가",
+    fields:[
+      {k:"title",label:"양식 이름",type:"text",req:true},
+      {k:"desc",label:"설명",type:"text",hint:"예: 별지 제1호서식"},
+      {k:"url",label:"파일 링크",type:"url",req:true,full:true,hint:"구글 드라이브 공유 링크 등"}
+    ], view:x=>({t:x.title, s:x.desc}) },
+  equipment: { title:"대여 가능 장비", desc:"시설·장비 빌리기 화면의 장비 목록이에요.", add:"장비 추가",
+    fields:[
+      {k:"name",label:"장비 이름",type:"text",req:true},
+      {k:"desc",label:"설명",type:"text"},
+      {k:"img",label:"사진",type:"image"}
+    ], view:x=>({img:x.img, t:x.name, s:x.desc}) }
+};
+const SETTING_FIELDS = [
+  {k:"logo",label:"로고 (흰 배경용)",type:"image",hint:"비워두면 기본 로고가 나와요"},
+  {k:"logoDark",label:"로고 (맨 아래 어두운 배경용)",type:"image",hint:"글자가 흰색인 로고. 비워두면 기본 흰 글씨 로고가 나와요"},
+  {k:"heroTitle",label:"첫 화면 제목",type:"text",full:true,hint:"| 뒤는 색이 들어가는 둘째 줄이에요. 예: 배우고, 찍고, 나누는|부안의 미디어 놀이터"},
+  {k:"heroSub",label:"첫 화면 설명",type:"textarea",full:true},
+  {k:"address",label:"주소",type:"text",full:true},
+  {k:"phone",label:"전화",type:"text"},
+  {k:"email",label:"이메일",type:"text"},
+  {k:"hours",label:"운영 시간",type:"text"},
+  {k:"closed",label:"휴관",type:"text"},
+  {k:"operator",label:"운영 기관",type:"text"},
+  {k:"mapLink",label:"지도 링크",type:"url"},
+  {k:"mapLat",label:"지도 위도",type:"text",hint:"네이버 지도 주소의 lat= 뒤 숫자"},
+  {k:"mapLng",label:"지도 경도",type:"text",hint:"네이버 지도 주소의 lng= 뒤 숫자"},
+  {k:"mallName",label:"소상공인 메뉴 이름",type:"text",hint:"맨 위 메뉴에 보이는 이름"},
+  {k:"pixelPals",label:"픽셀 캐릭터 보이기 (화면 아래를 걸어 다니며 안내해요)",type:"bool"},
+  {k:"eduOnlineOpen",label:"온라인 교육 신청 열기 (켜면 '온라인으로 신청하기' 버튼이 활성화돼요)",type:"bool"},
+  {k:"eduApply",label:"온라인 교육 신청 링크",type:"url",full:true,hint:"군청 온라인 신청 페이지 주소"},
+  {k:"eduApplyNote",label:"교육 신청 안내 문구",type:"textarea",full:true},
+  {k:"rentFacility",label:"시설 대관 예약 링크",type:"url",full:true},
+  {k:"rentEquip",label:"장비 대여 링크(공유누리 검색 결과)",type:"url",full:true},
+  {k:"equipForm",label:"장비 대여 신청서 링크",type:"url",full:true},
+  {k:"facGuide",label:"시설 대관 방법 영상",type:"url",hint:"시설·장비 빌리기 화면 맨 위에 나와요"},
+  {k:"equipGuide",label:"장비 대여 방법 영상",type:"url",hint:"시설·장비 빌리기 화면 맨 위에 나와요"},
+  {k:"youtube",label:"유튜브 채널",type:"url"},
+  {k:"instagram",label:"인스타그램",type:"url"},
+  {k:"stats",label:"숫자로 보는 미디어센터 (이름 · 숫자 · 단위)",type:"stats",full:true},
+  {k:"statsNote",label:"숫자 아래 작은 안내 글",type:"text",full:true,hint:"비우면 안 보여요"}
+];
+const MENU = [
+  ["classes","미디어 교육 일정"],["mall","소상공인 라이브커머스"],["films","군민 제작 영화"],["videos","유튜브"],["notices","공지사항"],
+  ["facilities","대관 가능 시설"],["forms","신청서 양식"],["rules","준수사항·사용료·감면"],["settings","기본 설정"],
+  ["-"],["inbox","문의함"],["password","비밀번호 변경"]
+];
+
+/* ---------- 공통 ---------- */
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+function yt(u){ const m = String(u||"").match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
+function fixImg(u){ u = String(u||"").trim(); const m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/); return m ? `https://lh3.googleusercontent.com/d/${m[1]}` : u; }
+function toast(t){ const el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(()=>el.classList.remove("show"), 2600); }
+async function call(action, payload={}){
+  const r = await fetch(API, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({action, token:TOKEN, ...payload})});
+  const j = await r.json();
+  if(j.auth === false){ logout(); throw new Error(j.error); }
+  if(!j.ok) throw new Error(j.error || "처리하지 못했어요.");
+  return j;
+}
+function setSave(text, cls=""){ const el = $("#saveState"); if(el){ el.textContent = text; el.className = "save-state " + cls; } }
+async function persist(key){
+  setSave("저장하는 중…");
+  try{ await call("save", {key, value: STATE[key]}); setSave("저장됨 · 홈페이지에 바로 반영돼요", "ok"); }
+  catch(e){ setSave("저장 실패: " + e.message, "err"); toast("저장하지 못했어요: " + e.message); throw e; }
+}
+
+/* ---------- 로그인 ---------- */
+$("#loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = $("#loginMsg"); msg.textContent = "";
+  if(!API){ $("#noApi").classList.remove("hidden"); return; }
+  const btn = $("button[type=submit]", e.target); btn.disabled = true; btn.textContent = "확인하는 중…";
+  try{
+    const r = await fetch(API, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({action:"login", id:$("#lid").value, pw:$("#lpw").value})});
+    const j = await r.json();
+    if(!j.ok){ msg.textContent = j.error; return; }
+    TOKEN = j.token; try{ sessionStorage.setItem("bmc-token", TOKEN); }catch(_){}
+    $("#lpw").value = ""; await start();
+  }catch(err){ msg.textContent = "서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요."; }
+  finally{ btn.disabled = false; btn.textContent = "로그인"; }
+});
+function logout(){ TOKEN = ""; try{ sessionStorage.removeItem("bmc-token"); }catch(_){} $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); }
+$("#logoutBtn").addEventListener("click", logout);
+
+async function start(){
+  const r = await fetch(API + (API.includes("?")?"&":"?") + "action=data", {cache:"no-store"});
+  const j = await r.json();
+  STATE = { settings: Object.assign(clone(D.settings), j.settings || {}) };
+  ["mall","films","videos","notices","classes","facilities","equipment","rules","forms"].forEach(k => STATE[k] = j[k] !== undefined ? j[k] : clone(D.data[k]));
+  STATE._fromDefault = Object.keys(STATE).filter(k => k!=="settings" && j[k] === undefined);
+  $("#loginView").classList.add("hidden"); $("#appView").classList.remove("hidden");
+  $("#sideNav").innerHTML = MENU.map(m => m[0]==="-" ? `<div class="sep"></div>` : `<button data-go="${m[0]}">${m[1]}</button>`).join("");
+  $$("#sideNav [data-go]").forEach(b => b.addEventListener("click", () => show(b.dataset.go)));
+  show("classes");
+}
+
+/* ---------- 화면 ---------- */
+let CUR = "classes";
+function show(key){
+  CUR = key;
+  $$("#sideNav [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go===key));
+  if(SECTIONS[key]) return renderList(key);
+  ({settings:renderSettings, rules:renderRules, inbox:renderInbox, password:renderPassword})[key]();
+  scrollTo({top:0});
+}
+function head(title, desc, right=""){
+  return `<div class="top"><div><h2>${esc(title)}</h2><p>${esc(desc)}</p></div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span id="saveState" class="save-state"></span>${right}</div></div>`;
+}
+function renderList(key){
+  const S = SECTIONS[key], list = STATE[key] || [];
+  const note = STATE._fromDefault.includes(key) ? `<div class="help">지금 보이는 내용은 처음 넣어둔 기본(예시) 내용이에요. 고치거나 지우고 저장하면 그때부터 이 내용이 홈페이지에 나와요.</div>` : "";
+  $("#mainArea").innerHTML = head(S.title, S.desc, `<button class="btn primary" id="addBtn">+ ${S.add}</button>`) + note +
+    (list.length ? `<div class="list">${list.map((x,i)=>{ const v = S.view(x);
+      return `<div class="item${v.off?" off":""}">
+        <div class="ord"><button aria-label="위로" data-up="${i}" ${i===0?"disabled":""}>▲</button><button aria-label="아래로" data-down="${i}" ${i===list.length-1?"disabled":""}>▼</button></div>
+        <div class="thumb" ${v.img?`style="background-image:url('${esc(fixImg(v.img))}')"`:""}>${v.img?"":"사진<br>없음"}</div>
+        <div><div class="tt">${v.off?'<span class="tag hide">숨김</span>':""}${(v.tags||[]).join("")}${esc(v.t||"(제목 없음)")}</div><div class="sub">${esc(v.s||"")}</div></div>
+        <div class="acts"><button class="btn ghost small" data-edit="${i}">수정</button>${"show" in x || S.fields.some(f=>f.k==="show") ? `<button class="btn ghost small" data-toggle="${i}">${x.show===false?"보이기":"숨기기"}</button>`:""}</div>
+      </div>`; }).join("")}</div>` : `<div class="empty">아직 등록된 항목이 없어요. 오른쪽 위 버튼으로 추가해 주세요.</div>`);
+  $("#addBtn").onclick = () => openEdit(key, -1);
+  $$("[data-edit]").forEach(b => b.onclick = () => openEdit(key, +b.dataset.edit));
+  $$("[data-up]").forEach(b => b.onclick = () => move(key, +b.dataset.up, -1));
+  $$("[data-down]").forEach(b => b.onclick = () => move(key, +b.dataset.down, 1));
+  $$("[data-toggle]").forEach(b => b.onclick = async () => { const x = STATE[key][+b.dataset.toggle]; x.show = x.show===false; renderList(key); await persist(key).catch(()=>{}); });
+}
+async function move(key, i, d){
+  const a = STATE[key]; const j = i + d; if(j<0||j>=a.length) return;
+  [a[i], a[j]] = [a[j], a[i]]; renderList(key); await persist(key).catch(()=>{});
+}
+
+/* ---------- 입력 칸 ---------- */
+function fieldHTML(f, v, prefix="f"){
+  const id = `${prefix}-${f.k}`, req = f.req ? " required" : "";
+  const lab = `<label for="${id}">${esc(f.label)}${f.req?' <span style="color:var(--danger)">*</span>':""}</label>`;
+  const hint = f.hint ? `<span class="hint">${esc(f.hint)}</span>` : "";
+  const full = f.full ? " full" : "";
+  if(f.type==="bool") return `<div class="f${full} full"><label class="switch"><input type="checkbox" id="${id}" data-k="${f.k}" ${v?"checked":""}> ${esc(f.label)}</label></div>`;
+  if(f.type==="textarea") return `<div class="f${full}">${lab}<textarea id="${id}" data-k="${f.k}"${req}>${esc(v)}</textarea>${hint}</div>`;
+  if(f.type==="select") return `<div class="f${full}">${lab}<select id="${id}" data-k="${f.k}">${f.options.map(o=>`<option ${o===v?"selected":""}>${esc(o)}</option>`).join("")}</select>${hint}</div>`;
+  if(f.type==="days"){ const set = String(v||"").split(/[,\s·]+/);
+    return `<div class="f${full}"><span class="lb">${esc(f.label)}</span><div class="days" data-k="${f.k}" data-type="days">${["월","화","수","목","금","토","일"].map(d=>`<label><input type="checkbox" value="${d}" ${set.includes(d)?"checked":""}>${d}</label>`).join("")}</div></div>`; }
+  if(f.type==="image") return `<div class="f${full}"><span class="lb">${esc(f.label)}</span><div class="img-field">
+      <div class="img-prev" id="${id}-prev" ${v?`style="background-image:url('${esc(fixImg(v))}')"`:""}>${v?"":"사진 없음"}</div>
+      <div class="img-btns"><button type="button" class="btn ghost small" data-upload="${id}">컴퓨터에서 사진 올리기</button>
+      <input type="url" id="${id}" data-k="${f.k}" value="${esc(v)}" placeholder="또는 사진 주소 붙여넣기(구글 드라이브 링크 가능)">
+      ${v?`<button type="button" class="btn ghost small" data-clear="${id}">사진 빼기</button>`:""}</div></div>${hint}</div>`;
+  if(f.type==="stats"){ const rows = (v && v.length ? v : [["","",""],["","",""],["","",""],["","",""]]).slice(0,4);
+    while(rows.length<4) rows.push(["","",""]);
+    return `<div class="f${full}"><span class="lb">${esc(f.label)}</span>${rows.map((r,i)=>`<div class="stats-grid" data-stat="${i}"><input type="text" value="${esc(r[0])}" placeholder="예: 올해 교육" aria-label="이름 ${i+1}"><input type="number" value="${esc(r[1])}" placeholder="48" aria-label="숫자 ${i+1}"><input type="text" value="${esc(r[2])}" placeholder="회" aria-label="단위 ${i+1}"></div>`).join("")}${hint}</div>`; }
+  const t = f.type==="url" ? "url" : f.type==="date" ? "date" : "text";
+  return `<div class="f${full}">${lab}<input type="${t}" id="${id}" data-k="${f.k}" value="${esc(v)}"${req}${f.list?` list="${f.list}"`:""}>${hint}</div>`;
+}
+function readFields(box, fields){
+  const out = {};
+  fields.forEach(f => {
+    if(f.type==="days"){ out[f.k] = $$(`[data-k="${f.k}"] input:checked`, box).map(i=>i.value).join(","); return; }
+    if(f.type==="stats"){ out[f.k] = $$("[data-stat]", box).map(r => { const [a,b,c] = $$("input", r).map(i=>i.value.trim()); return [a, Number(b)||0, c]; }).filter(r=>r[0]); return; }
+    const el = $(`[data-k="${f.k}"]`, box); if(!el) return;
+    out[f.k] = el.type==="checkbox" ? el.checked : el.value.trim();
+  });
+  return out;
+}
+function wireImages(box){
+  $$("[data-upload]", box).forEach(b => b.onclick = () => pickImage(b.dataset.upload));
+  $$("[data-clear]", box).forEach(b => b.onclick = () => { const inp = $("#"+b.dataset.clear); inp.value = ""; const p = $("#"+b.dataset.clear+"-prev"); p.style.backgroundImage = ""; p.textContent = "사진 없음"; b.remove(); });
+  $$('.img-field input[type=url]', box).forEach(inp => inp.addEventListener("change", () => { const p = $("#"+inp.id+"-prev"); p.style.backgroundImage = inp.value ? `url('${fixImg(inp.value)}')` : ""; p.textContent = inp.value ? "" : "사진 없음"; }));
+}
+let pickTarget = null;
+function pickImage(id){ pickTarget = id; $("#filePick").value = ""; $("#filePick").click(); }
+$("#filePick").addEventListener("change", async e => {
+  const file = e.target.files[0]; if(!file || !pickTarget) return;
+  const id = pickTarget, prev = $("#"+id+"-prev");
+  prev.textContent = "올리는 중…"; prev.style.backgroundImage = "";
+  try{
+    const data = await shrink(file);
+    const j = await call("upload", {name: file.name.replace(/\.[^.]+$/,"") + ".jpg", type:"image/jpeg", data});
+    $("#"+id).value = j.url; prev.style.backgroundImage = `url('${j.url}')`; prev.textContent = "";
+    toast("사진을 올렸어요. 저장을 눌러야 반영돼요.");
+  }catch(err){ prev.textContent = "실패"; toast("사진을 올리지 못했어요: " + err.message); }
+});
+// 드라이브 용량을 아끼려고 사진을 긴 쪽 1200px로 줄여서 올림(한 장에 보통 0.1~0.3MB)
+function shrink(file){
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const max = 1200, s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0,0,c.width,c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg", .8));
+    };
+    img.onerror = () => rej(new Error("사진 파일을 읽지 못했어요."));
+    img.src = url;
+  });
+}
+
+/* ---------- 수정 창 ---------- */
+let EDIT = null;
+function openEdit(key, i){
+  const S = SECTIONS[key], item = i>=0 ? STATE[key][i] : {};
+  EDIT = {key, i};
+  $("#editTitle").textContent = i>=0 ? `${S.title} 수정` : S.add;
+  const lists = `<datalist id="cats">${[...new Set(STATE.mall.map(x=>x.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
+    <datalist id="progs">${[...new Set((STATE.films||[]).map(x=>x.program).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
+    <datalist id="vcats">${[...new Set(STATE.videos.map(x=>x.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join("")}</datalist>`;
+  $("#editFields").innerHTML = S.fields.map(f => {
+    let v = item[f.k]; if(v===undefined && i<0) v = typeof f.def==="function" ? f.def() : f.def;
+    return fieldHTML(f, v ?? "");
+  }).join("") + lists;
+  wireImages($("#editFields"));
+  $("#editDelete").classList.toggle("hidden", i<0);
+  const urlBox = key==="videos" ? $("#f-url") : null;
+  if(urlBox) urlBox.addEventListener("change", async () => {
+    if($("#f-title").value || !yt(urlBox.value)) return;
+    try{ const r = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(urlBox.value)}`); const j = await r.json(); if(j.title && !$("#f-title").value) $("#f-title").value = j.title; }catch(_){}
+  });
+  $("#editModal").classList.add("show");
+  setTimeout(()=>{ const first = $("#editFields input:not([type=checkbox]), #editFields textarea"); first && first.focus(); }, 30);
+}
+function closeEdit(){ $("#editModal").classList.remove("show"); EDIT = null; }
+$("#editCancel").onclick = closeEdit;
+$("#editModal").addEventListener("click", e => { if(e.target.id==="editModal") closeEdit(); });
+document.addEventListener("keydown", e => { if(e.key==="Escape" && EDIT) closeEdit(); });
+$("#editForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const {key, i} = EDIT, S = SECTIONS[key];
+  const val = readFields($("#editFields"), S.fields);
+  const miss = S.fields.filter(f => f.req && !val[f.k]);
+  if(miss.length){ toast(`'${miss[0].label}' 칸을 채워 주세요.`); return; }
+  if(key==="classes" && val.start && val.end && val.end < val.start){ toast("종료일이 시작일보다 빨라요."); return; }
+  const before = clone(STATE[key]);
+  if(i>=0) STATE[key][i] = Object.assign({}, STATE[key][i], val); else STATE[key].unshift(val);
+  closeEdit(); renderList(key);
+  try{ await persist(key); STATE._fromDefault = STATE._fromDefault.filter(k=>k!==key); renderList(key); setSave("저장됨 · 홈페이지에 바로 반영돼요","ok"); }
+  catch(err){ STATE[key] = before; renderList(key); }
+});
+$("#editDelete").onclick = async () => {
+  const {key, i} = EDIT; const S = SECTIONS[key];
+  const name = S.view(STATE[key][i]).t;
+  if(!$("#editDelete").dataset.confirm){ $("#editDelete").dataset.confirm = 1; $("#editDelete").textContent = `'${name}' 정말 삭제할까요? 한 번 더 누르면 삭제`; return; }
+  delete $("#editDelete").dataset.confirm; $("#editDelete").textContent = "삭제";
+  const before = clone(STATE[key]);
+  STATE[key].splice(i,1); closeEdit(); renderList(key);
+  try{ await persist(key); } catch(err){ STATE[key] = before; renderList(key); }
+};
+new MutationObserver(()=>{ if(!$("#editModal").classList.contains("show")){ delete $("#editDelete").dataset.confirm; $("#editDelete").textContent = "삭제"; } }).observe($("#editModal"), {attributes:true});
+
+/* ---------- 기본 설정 ---------- */
+function renderSettings(){
+  $("#mainArea").innerHTML = head("기본 설정", "로고, 첫 화면 문구, 연락처, 각종 링크와 실적 숫자를 바꿔요.") +
+    `<form class="panel" id="setForm"><div class="fgrid">${SETTING_FIELDS.map(f=>fieldHTML(f, STATE.settings[f.k] ?? "", "s")).join("")}</div>
+     <div style="margin-top:22px"><button class="btn primary" type="submit">설정 저장</button></div></form>`;
+  wireImages($("#setForm"));
+  $("#setForm").onsubmit = async e => { e.preventDefault(); Object.assign(STATE.settings, readFields($("#setForm"), SETTING_FIELDS)); await persist("settings").then(()=>toast("설정을 저장했어요.")).catch(()=>{}); };
+}
+
+/* ---------- 준수사항 ---------- */
+function renderRules(){
+  const R = STATE.rules || {};
+  $("#mainArea").innerHTML = head("준수사항·사용료·감면", "시설·장비 빌리기 화면에 나오는 준수사항, 장비 사용료, 감면 기준이에요. 한 줄에 한 항목씩 적어요.") +
+    `<form class="panel" id="ruleForm"><div class="fgrid">
+      <div class="f full"><label for="r-equip">장비 대여</label><textarea id="r-equip" style="min-height:170px">${esc((R.equip||[]).join("\n"))}</textarea></div>
+      <div class="f full"><label for="r-fac">시설 대관</label><textarea id="r-fac" style="min-height:150px">${esc((R.facility||[]).join("\n"))}</textarea></div>
+      <div class="f full"><label for="r-note">준수사항 아래 안내 문구</label><input type="text" id="r-note" value="${esc(R.note||"")}"></div>
+      <div class="f full"><label for="r-fee">장비 사용료 (한 줄에 하나, 장비명|금액)</label><textarea id="r-fee" style="min-height:150px">${esc((R.equipFees||[]).join("\n"))}</textarea></div>
+      <div class="f full"><label for="r-free">사용료 전액 면제 대상</label><textarea id="r-free">${esc((R.discountFree||[]).join("\n"))}</textarea></div>
+      <div class="f full"><label for="r-half">사용료 50% 이내 감면 대상</label><textarea id="r-half" style="min-height:190px">${esc((R.discountHalf||[]).join("\n"))}</textarea></div>
+      <div class="f full"><label for="r-dnote">감면 안내 문구</label><input type="text" id="r-dnote" value="${esc(R.discountNote||"")}"></div>
+     </div><div style="margin-top:22px"><button class="btn primary" type="submit">준수사항 저장</button></div></form>`;
+  $("#ruleForm").onsubmit = async e => { e.preventDefault();
+    const lines = id => $(id).value.split("\n").map(s=>s.trim()).filter(Boolean);
+    STATE.rules = {equip: lines("#r-equip"), facility: lines("#r-fac"), note: $("#r-note").value.trim(), equipFees: lines("#r-fee"), discountFree: lines("#r-free"), discountHalf: lines("#r-half"), discountNote: $("#r-dnote").value.trim()};
+    await persist("rules").then(()=>toast("준수사항을 저장했어요.")).catch(()=>{}); };
+}
+
+/* ---------- 문의함 ---------- */
+async function renderInbox(){
+  $("#mainArea").innerHTML = head("문의함", "홈페이지 문의하기로 들어온 내용이에요. 같은 내용이 센터 메일로도 가요.", `<button class="btn ghost" id="reloadInq">새로고침</button>`) + `<div class="list" id="inqList"><div class="empty">불러오는 중…</div></div>`;
+  $("#reloadInq").onclick = renderInbox;
+  try{
+    const {list} = await call("inquiries");
+    $("#inqList").innerHTML = list.length ? list.map(q => `<div class="inq${q.done?" done":""}">
+      <div class="inq-head"><b>${esc(q.name)} · ${esc(q.contact)}</b><span class="sub" style="color:var(--muted)">${esc(q.at)} · ${esc(q.type||"")}</span></div>
+      <div class="inq-text">${esc(q.text)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input type="text" value="${esc(q.memo||"")}" placeholder="메모(예: 11/18 전화 답변)" data-memo="${q.row}" style="flex:1;min-width:200px;border:1px solid #cdd2da;border-radius:10px;padding:8px 12px">
+        <button class="btn ${q.done?"ghost":"primary"} small" data-done="${q.row}" data-v="${q.done?0:1}">${q.done?"처리 취소":"처리 완료"}</button>
+      </div></div>`).join("") : `<div class="empty">아직 들어온 문의가 없어요.</div>`;
+    $$("[data-done]").forEach(b => b.onclick = async () => {
+      const row = +b.dataset.done; b.disabled = true;
+      try{ await call("inquiryDone", {row, done: b.dataset.v==="1", memo: $(`[data-memo="${row}"]`).value}); renderInbox(); }
+      catch(e){ toast(e.message); b.disabled = false; }
+    });
+  }catch(e){ $("#inqList").innerHTML = `<div class="empty">문의를 불러오지 못했어요: ${esc(e.message)}</div>`; }
+}
+
+/* ---------- 비밀번호 ---------- */
+function renderPassword(){
+  $("#mainArea").innerHTML = head("비밀번호 변경", "관리자 비밀번호를 바꿔요. 8자 이상으로 정해 주세요.") +
+    `<form class="panel" id="pwForm" style="max-width:520px"><div class="fgrid">
+      <div class="f full"><label for="pw0">지금 비밀번호</label><input type="password" id="pw0" autocomplete="current-password" required></div>
+      <div class="f full"><label for="pw1">새 비밀번호</label><input type="password" id="pw1" autocomplete="new-password" required minlength="8"></div>
+      <div class="f full"><label for="pw2">새 비밀번호 한 번 더</label><input type="password" id="pw2" autocomplete="new-password" required></div>
+     </div><div style="margin-top:22px"><button class="btn primary" type="submit">비밀번호 바꾸기</button></div></form>`;
+  $("#pwForm").onsubmit = async e => { e.preventDefault();
+    if($("#pw1").value !== $("#pw2").value){ toast("새 비밀번호가 서로 달라요."); return; }
+    try{ await call("password", {oldPw: $("#pw0").value, newPw: $("#pw1").value}); toast("비밀번호를 바꿨어요."); e.target.reset(); }
+    catch(err){ toast(err.message); } };
+}
+
+/* ---------- 시작 ---------- */
+if(!API) $("#noApi").classList.remove("hidden");
+if(API && TOKEN){ call("check").then(start).catch(()=>logout()); }
+</script>
+</body>
+</html>
