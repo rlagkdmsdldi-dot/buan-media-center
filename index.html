@@ -110,8 +110,10 @@ section.block.soft{background:var(--soft)}
 /* 숫자 */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
 .stat b{display:block;font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.03em}
-.stat span{color:var(--muted);font-weight:600}
-.stat:nth-child(1) b{color:var(--t-orange)}.stat:nth-child(2) b{color:var(--t-teal)}.stat:nth-child(3) b{color:var(--t-pink)}.stat:nth-child(4) b{color:var(--t-purple)}.stat:nth-child(5) b{color:var(--t-green)}.stat:nth-child(6) b{color:var(--c-navy)}
+.stat .num{display:flex;align-items:baseline;justify-content:center;gap:4px}
+.stat .num em{font-style:normal;font-family:var(--display);font-size:1.4rem;color:var(--muted)}
+.stat span{display:block;margin-top:4px;color:var(--ink);font-weight:700;font-size:1rem}
+.stat:nth-child(1) .num b{color:var(--t-orange)}.stat:nth-child(2) .num b{color:var(--t-teal)}.stat:nth-child(3) .num b{color:var(--t-pink)}.stat:nth-child(4) b{color:var(--t-purple)}.stat:nth-child(5) b{color:var(--t-green)}.stat:nth-child(6) b{color:var(--c-navy)}
 .note-small{font-size:.75rem;color:var(--muted);text-align:center;margin-top:18px}
 
 /* 카드 그리드 */
@@ -285,7 +287,10 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 @media (max-width:760px){
   .wrap{padding:0 18px}
   .grid4{grid-template-columns:repeat(2,1fr);gap:22px 14px}
-  .stats{grid-template-columns:1fr 1fr;gap:28px}
+  .stats{grid-template-columns:repeat(3,1fr);gap:10px}
+  .stat .num b{font-size:2rem}
+  .stat .num em{font-size:1rem}
+  .stat span{font-size:.82rem;line-height:1.35}
   .class-row,.info-grid,.space-grid,.quick,.map-box,.foot{grid-template-columns:1fr}
   .form-grid{grid-template-columns:1fr}
   .form-wrap{padding:24px 18px}
@@ -957,7 +962,7 @@ function renderAll(){
   $("#statsTitle").textContent = SETTINGS.statsTitle || "숫자로 보는 부안미디어센터";
   $("#statsSince").textContent = SETTINGS.statsSince || "";
   $("#stats").style.gridTemplateColumns = innerWidth < 760 ? "" : `repeat(${Math.max(1,st.length)},1fr)`;
-  $("#stats").innerHTML = st.map(s=>`<div class="stat"><b data-to="${Number(s[1])||0}">${(Number(s[1])||0).toLocaleString()}</b><span>${esc(s[0])} (${esc(s[2]||"")})</span></div>`).join("");
+  $("#stats").innerHTML = st.map(s=>`<div class="stat"><div class="num"><b data-to="${Number(s[1])||0}">${(Number(s[1])||0).toLocaleString()}</b><em>${esc(s[2]||"")}</em></div><span>${esc(s[0])}</span></div>`).join("");
   $("#stats").closest("section").hidden = !st.length;
   $("#statsNote").textContent = SETTINGS.statsNote || "";
 
