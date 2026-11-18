@@ -97,7 +97,7 @@ window.BMC_DEFAULTS = {
   facilities: [
     {name:"스튜디오(영상, 라디오)",desc:"조정실을 포함한 영상·라디오 촬영 스튜디오",size:"85㎡",fee:"1시간 10,000원",who:"조정실(음향·영상 장비) 사용 교육을 받은 분",img:"facilities/studio.jpg"},
     {name:"1인미디어실",desc:"유튜브·라이브 방송을 혼자 촬영하기 좋은 공간. 최대 4시간 이용",size:"22㎡",fee:"1회 5,000원",who:"방송 장비 사용 교육을 받은 분",img:"facilities/oneperson.jpg"},
-    {name:"편집실",desc:"영상 편집용 컴퓨터를 쓸 수 있는 공간",size:"9㎡",fee:"1시간 3,000원",who:"누구나 이용 가능",img:""},
+    {name:"편집실",desc:"영상 편집용 컴퓨터를 쓸 수 있는 공간",size:"9㎡",fee:"1시간 3,000원",who:"누구나 이용 가능",img:"facilities/edit.jpg"},
     {name:"디지털강의실",desc:"12석 규모의 디지털 강의실",size:"43㎡",fee:"1시간 15,000원",who:"누구나 이용 가능",img:"facilities/digital.jpg"},
     {name:"일반강의실",desc:"14석 규모의 강의실",size:"39㎡",fee:"1시간 10,000원",who:"누구나 이용 가능",img:"facilities/general.jpg"},
     {name:"영상교육실",desc:"영상 교육용 강의실",size:"41㎡",fee:"1시간 10,000원",who:"누구나 이용 가능",img:"facilities/video.jpg"},
