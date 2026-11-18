@@ -802,15 +802,13 @@ function mallCard(m){
     return `<a class="badge link lt-${c}" href="${esc(u)}" target="_blank" rel="noopener">${esc(t||"바로가기")} ↗</a>`; }).join("");
   return `<div class="card shop rv">
     <a class="shop-main" href="${esc(main)}" target="_blank" rel="noopener">
-      <div class="thumb">${imgOr(m.img, label, m.cat)}
-        <div class="avatar" style="background:${pick(m.name+"o")}">${m.owner?`<img src="${esc(fixImg(m.owner))}" alt="">`:esc((m.ownerName||label).slice(0,1))}</div>
-      </div>
+      <div class="thumb">${imgOr(m.img, label)}</div>
       <div class="card-body">
         <div class="card-title">${esc(m.name)}</div>
         <div class="card-desc">${esc(m.desc)}</div>
       </div>
     </a>
-    <div class="badges" style="padding:0 4px">${chips}${m.cat?`<span class="badge">${esc(m.cat)}</span>`:""}</div>
+    <div class="badges" style="padding:0 4px">${chips}</div>
   </div>`;
 }
 function ytId(url){ const m = String(url||"").match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
@@ -1040,7 +1038,7 @@ function renderAll(){
 
   // 라이브커머스
   const drawMall = cat => { $("#mallGrid").innerHTML = mall.filter(m=>cat==="전체"||m.cat===cat).map(mallCard).join("") || `<div class="empty">등록된 가게가 없어요.</div>`; reveal(); };
-  chips($("#mallChips"), uniq(mall.map(m=>m.cat)), drawMall); drawMall("전체");
+  $("#mallChips").hidden = true; drawMall("전체");
   // 영상
   const drawVid = cat => { $("#videoGrid").innerHTML = vids.filter(v=>cat==="전체"||v.cat===cat).map(videoCard).join("") || `<div class="empty">등록된 영상이 없어요.</div>`; reveal(); };
   chips($("#videoChips"), uniq(vids.map(v=>v.cat)), drawVid); drawVid("전체");

@@ -156,6 +156,7 @@ main{padding:32px clamp(18px,4vw,48px) 80px;max-width:1100px;width:100%}
 </div>
 <div class="toast" id="toast" role="status"></div>
 <input type="file" id="filePick" accept="image/*" class="hidden">
+<input type="file" id="docPick" accept=".hwp,.hwpx,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip" class="hidden">
 
 <script src="config.js"></script>
 <script src="defaults.js"></script>
@@ -176,18 +177,15 @@ const SECTIONS = {
     fields:[
       {k:"show",label:"홈페이지에 보이기",type:"bool",def:true},
       {k:"name",label:"가게 이름",type:"text",req:true},
-      {k:"ownerName",label:"대표자 이름",type:"text",hint:"소상공인 사진이 없을 때 첫 글자가 동그라미에 나와요"},
-      {k:"cat",label:"업종",type:"text",list:"cats",hint:"필터 버튼 이름이 돼요. 예: 수산물, 농산물, 가공식품"},
       {k:"desc",label:"한 줄 소개",type:"text",full:true},
-      {k:"img",label:"상품 사진",type:"image"},
-      {k:"owner",label:"소상공인 사진",type:"image",hint:"얼굴 사진은 게시 동의를 받고 올려 주세요"},
+      {k:"img",label:"상품 사진",type:"image",full:true},
       {k:"link",label:"링크 1 (대표)",type:"url",req:true,hint:"카드를 누르면 이 링크로 이동해요"},
       {k:"type",label:"링크 1 종류",type:"select",options:LINK_TYPES},
       {k:"link2",label:"링크 2 (선택)",type:"url"},
       {k:"type2",label:"링크 2 종류",type:"select",options:LINK_TYPES},
       {k:"link3",label:"링크 3 (선택)",type:"url"},
       {k:"type3",label:"링크 3 종류",type:"select",options:LINK_TYPES}
-    ], view:x=>({img:x.img, t:x.name, s:[x.cat,[x.link&&x.type,x.link2&&x.type2,x.link3&&x.type3].filter(Boolean).join("·")].filter(Boolean).join(" · "), off:x.show===false}) },
+    ], view:x=>({img:x.img, t:x.name, s:[x.link&&x.type,x.link2&&x.type2,x.link3&&x.type3].filter(Boolean).join(" · "), off:x.show===false}) },
   films: { title:"군민 제작 영화", desc:"영화 교육에서 군민이 만든 작품이에요. 유튜브 주소만 넣으면 큰 썸네일이 나와요. 위에 있을수록 먼저 보여요.", add:"작품 추가",
     fields:[
       {k:"show",label:"홈페이지에 보이기",type:"bool",def:true},
@@ -232,11 +230,11 @@ const SECTIONS = {
       {k:"desc",label:"설명",type:"text",full:true},
       {k:"who",label:"이용 자격",type:"text",full:true,hint:"예: 누구나 이용 가능 / 조정실 사용 교육을 받은 분. '누구나'가 들어가면 회색, 아니면 주황색으로 표시돼요"}
     ], view:x=>({img:x.img, t:x.name, s:[x.size,x.fee,x.who].filter(Boolean).join(" · ")}) },
-  forms: { title:"신청서 양식", desc:"시설·장비 빌리기 화면 맨 아래 '신청서 양식 내려받기'에 나와요. 새 파일은 구글 드라이브에 올리고 공유 링크를 넣어요.", add:"양식 추가",
+  forms: { title:"신청서 양식", desc:"시설·장비 화면 맨 아래 '신청서 양식 내려받기'에 나와요. '컴퓨터에서 파일 올리기'로 한글 파일을 바로 올릴 수 있어요.", add:"양식 추가",
     fields:[
       {k:"title",label:"양식 이름",type:"text",req:true},
       {k:"desc",label:"설명",type:"text",hint:"예: 별지 제1호서식"},
-      {k:"url",label:"파일 링크",type:"url",req:true,full:true,hint:"구글 드라이브 공유 링크 등"}
+      {k:"url",label:"파일",type:"file",req:true,full:true,hint:"컴퓨터에 있는 한글·PDF·워드·엑셀 파일을 바로 올리거나, 파일 링크를 붙여넣어요 (10MB 이하)"}
     ], view:x=>({t:x.title, s:x.desc}) },
   equipment: { title:"대여 가능 장비", desc:"시설·장비 빌리기 화면의 장비 목록이에요.", add:"장비 추가",
     fields:[
@@ -382,6 +380,10 @@ function fieldHTML(f, v, prefix="f"){
   if(f.type==="stats"){ const rows = (v && v.length ? v : []).slice(0,6);
     while(rows.length<6) rows.push(["","",""]);
     return `<div class="f${full}"><span class="lb">${esc(f.label)}</span>${rows.map((r,i)=>`<div class="stats-grid" data-stat="${i}"><input type="text" value="${esc(r[0])}" placeholder="예: 올해 교육" aria-label="이름 ${i+1}"><input type="number" value="${esc(r[1])}" placeholder="48" aria-label="숫자 ${i+1}"><input type="text" value="${esc(r[2])}" placeholder="회" aria-label="단위 ${i+1}"></div>`).join("")}${hint}</div>`; }
+  if(f.type==="file") return `<div class="f${full}">${lab}<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button type="button" class="btn ghost small" data-fileup="${id}">컴퓨터에서 파일 올리기</button>
+      <input type="text" id="${id}" data-k="${f.k}" value="${esc(v)}"${req} placeholder="또는 파일 링크 붙여넣기" style="flex:1;min-width:220px">
+    </div><span class="hint" id="${id}-state">${v?"현재 파일이 연결되어 있어요":""}</span>${hint}</div>`;
   const t = f.type==="url" ? "url" : f.type==="date" ? "date" : "text";
   return `<div class="f${full}">${lab}<input type="${t}" id="${id}" data-k="${f.k}" value="${esc(v)}"${req}${f.list?` list="${f.list}"`:""}>${hint}</div>`;
 }
@@ -396,10 +398,24 @@ function readFields(box, fields){
   return out;
 }
 function wireImages(box){
+  $$("[data-fileup]", box).forEach(b => b.onclick = () => { fileTarget = b.dataset.fileup; $("#docPick").value = ""; $("#docPick").click(); });
   $$("[data-upload]", box).forEach(b => b.onclick = () => pickImage(b.dataset.upload));
   $$("[data-clear]", box).forEach(b => b.onclick = () => { const inp = $("#"+b.dataset.clear); inp.value = ""; const p = $("#"+b.dataset.clear+"-prev"); p.style.backgroundImage = ""; p.textContent = "사진 없음"; b.remove(); });
   $$('.img-field input[type=url]', box).forEach(inp => inp.addEventListener("change", () => { const p = $("#"+inp.id+"-prev"); p.style.backgroundImage = inp.value ? `url('${fixImg(inp.value)}')` : ""; p.textContent = inp.value ? "" : "사진 없음"; }));
 }
+let fileTarget = null;
+$("#docPick").addEventListener("change", async e => {
+  const file = e.target.files[0]; if(!file || !fileTarget) return;
+  const id = fileTarget, st = $("#"+id+"-state");
+  if(file.size > 10*1024*1024){ st.textContent = "10MB 이하 파일만 올릴 수 있어요."; return; }
+  st.textContent = `'${file.name}' 올리는 중…`;
+  try{
+    const data = await readAsDataURL(file);
+    const j = await call("uploadFile", {name: file.name, data});
+    $("#"+id).value = j.url; st.textContent = `'${file.name}' 올렸어요. 저장을 눌러야 반영돼요.`;
+    const t = $("#f-title"); if(t && !t.value) t.value = file.name.replace(/\.[^.]+$/,"");
+  }catch(err){ st.textContent = "올리지 못했어요: " + err.message + (/알 수 없는 요청/.test(err.message) ? " (관리 서버 코드를 새 버전으로 배포해야 해요)" : ""); }
+});
 let pickTarget = null;
 function pickImage(id){ pickTarget = id; $("#filePick").value = ""; $("#filePick").click(); }
 $("#filePick").addEventListener("change", async e => {
@@ -451,12 +467,18 @@ function openEdit(key, i){
     if($("#f-title").value || !yt(urlBox.value)) return;
     try{ const r = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(urlBox.value)}`); const j = await r.json(); if(j.title && !$("#f-title").value) $("#f-title").value = j.title; }catch(_){}
   });
+  editOpenedAt = Date.now();
   $("#editModal").classList.add("show");
   setTimeout(()=>{ const first = $("#editFields input:not([type=checkbox]), #editFields textarea"); first && first.focus(); }, 30);
 }
 function closeEdit(){ $("#editModal").classList.remove("show"); EDIT = null; }
 $("#editCancel").onclick = closeEdit;
-$("#editModal").addEventListener("click", e => { if(e.target.id==="editModal") closeEdit(); });
+let editOpenedAt = 0, downOnBackdrop = false;
+$("#editModal").addEventListener("pointerdown", e => { downOnBackdrop = e.target.id === "editModal"; });
+$("#editModal").addEventListener("click", e => {
+  // 수정 버튼을 두 번 눌러도 창이 바로 닫히지 않게: 배경을 직접 누르고, 연 지 0.6초가 지났을 때만 닫음
+  if(e.target.id === "editModal" && downOnBackdrop && Date.now() - editOpenedAt > 600) closeEdit();
+});
 document.addEventListener("keydown", e => { if(e.key==="Escape" && EDIT) closeEdit(); });
 $("#editForm").addEventListener("submit", async e => {
   e.preventDefault();

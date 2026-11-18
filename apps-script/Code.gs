@@ -72,6 +72,7 @@ function doPost(e) {
       case "check": return json_({ ok: true });
       case "save": return json_(save_(body.key, body.value));
       case "upload": return json_(upload_(body));
+      case "uploadFile": return json_(uploadFile_(body));
       case "inquiries": return json_(listInquiries_());
       case "inquiryDone": return json_(markInquiry_(body.row, body.done, body.memo));
       case "password": return json_(changePassword_(body.oldPw, body.newPw));
@@ -161,6 +162,25 @@ function upload_(b) {
   const file = folder.createFile(Utilities.newBlob(bytes, type, name));
   file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   return { ok: true, url: "https://lh3.googleusercontent.com/d/" + file.getId() };
+}
+
+/* ===================== 신청서 등 파일 ===================== */
+function uploadFile_(b) {
+  if (!b.data) return { ok: false, error: "파일이 없어요." };
+  const name = String(b.name || "file").replace(/[\\/:*?"<>|]/g, "_").slice(0, 120);
+  const ext = ((name.match(/\.([a-z0-9]+)$/i) || [])[1] || "").toLowerCase();
+  const MIME = { hwp: "application/x-hwp", hwpx: "application/haansofthwpx", pdf: "application/pdf",
+    doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    xls: "application/vnd.ms-excel", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ppt: "application/vnd.ms-powerpoint", pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    zip: "application/zip", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png" };
+  if (!MIME[ext]) return { ok: false, error: "한글(hwp·hwpx), PDF, 워드, 엑셀, 파워포인트, zip 파일만 올릴 수 있어요." };
+  const bytes = Utilities.base64Decode(String(b.data).replace(/^data:[^,]*,/, ""));
+  if (bytes.length > 10 * 1024 * 1024) return { ok: false, error: "파일이 너무 커요. 10MB 이하로 올려 주세요." };
+  const folder = DriveApp.getFolderById(PropertiesService.getScriptProperties().getProperty("FOLDER"));
+  const file = folder.createFile(Utilities.newBlob(bytes, MIME[ext], name));
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return { ok: true, url: "https://drive.google.com/uc?export=download&id=" + file.getId(), name: name };
 }
 
 /* ===================== 문의 ===================== */
