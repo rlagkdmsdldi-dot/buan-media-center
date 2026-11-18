@@ -139,6 +139,8 @@ section.block.soft{background:var(--soft)}
 .badge.link{color:#fff;text-decoration:none}
 .badge.link:hover{filter:brightness(1.1)}
 .shop-main{display:block;text-decoration:none;color:inherit}
+.product{font-size:.9rem;margin-top:4px;color:var(--ink)}
+.product b{font-size:.75rem;color:var(--t-green);background:#eef6e3;border-radius:6px;padding:2px 6px;margin-right:4px}
 .lt-스마트스토어{background:#03a94d}.lt-블로그{background:#1e9e5a}.lt-유튜브{background:#d93025}.lt-인스타그램{background:#c13584}.lt-기타{background:#56606e}
 
 /* 필터 칩 */
@@ -455,7 +457,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
   <section class="block" data-c="green">
     <div class="wrap">
       <div class="sec-head rv">
-        <div><div class="eyebrow">소상공인 라이브커머스</div><h2 class="sec-title">라이브커머스로 만나는 우리 동네 가게</h2><p class="sec-lead">미디어센터 소상공인 라이브커머스 교육에 참여한 부안의 가게들이에요. 가게를 누르면 스마트스토어나 블로그로 바로 이동해요.</p></div>
+        <div><div class="eyebrow">소상공인 라이브커머스</div><h2 class="sec-title">라이브커머스로 만나는 우리 동네 가게</h2><p class="sec-lead">미디어센터 소상공인 라이브커머스 교육에 참여한 부안의 사업자예요. 누르면 스마트스토어나 블로그로 바로 이동해요.</p></div>
         <a class="more" href="#mall">전체 보기</a>
       </div>
       <div class="grid4" id="homeMall"></div>
@@ -663,7 +665,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 
 <!-- ========== 소상공인 ========== -->
 <div class="page" data-page="mall" data-c="green">
-  <div class="page-hero"><div class="wrap"><div class="eyebrow">소상공인 라이브커머스</div><h1>부안 소상공인 라이브커머스</h1><p>부안미디어센터 소상공인 라이브커머스 교육에 참여한 우리 동네 가게들을 소개해요. 가게를 누르면 스마트스토어, 블로그, 유튜브로 바로 이동해요.</p></div></div>
+  <div class="page-hero"><div class="wrap"><div class="eyebrow">소상공인 라이브커머스</div><h1>부안 소상공인 라이브커머스</h1><p>부안미디어센터 소상공인 라이브커머스 교육에 참여한 우리 동네 사업자를 소개해요. 누르면 스마트스토어, 블로그, 유튜브로 바로 이동해요.</p></div></div>
   <section class="block">
     <div class="wrap">
       <div class="chips" id="mallChips" role="group" aria-label="업종 고르기"></div>
@@ -815,10 +817,11 @@ function mallCard(m){
     return `<a class="badge link lt-${c}" href="${esc(u)}" target="_blank" rel="noopener">${esc(t||"바로가기")} ↗</a>`; }).join("");
   return `<div class="card shop rv">
     <a class="shop-main" href="${esc(main)}" target="_blank" rel="noopener">
-      <div class="thumb">${imgOr(m.img, label)}</div>
+      <div class="thumb">${imgOr(m.img, label, m.product)}</div>
       <div class="card-body">
         <div class="card-title">${esc(m.name)}</div>
-        <div class="card-desc">${esc(m.desc)}</div>
+        ${m.product?`<div class="product"><b>주요 상품</b> ${esc(m.product)}</div>`:""}
+        ${m.desc && m.desc.trim() !== "-" ? `<div class="card-desc">${esc(m.desc)}</div>` : ""}
       </div>
     </a>
     <div class="badges" style="padding:0 4px">${chips}</div>
