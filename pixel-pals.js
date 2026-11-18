@@ -121,7 +121,7 @@
     grounds.forEach((gEl, gi) => {
       const decos = gi === 0 ? [[TREE,6,40],[FLOWER,20,12],[HOUSE,78,48],[FLOWER2,90,12],[TREE,94,40]]
                              : [[FLOWER2,4,12],[TREE,12,40],[FLOWER,60,12],[HOUSE,86,48]];
-      decos.forEach(([src,left,w]) => { if(small && w>12 && left<50 && left>8) return; const im = new Image(); im.src = src; im.className = "deco"; im.alt = ""; im.style.left = left+"%"; im.style.width = w+"px"; gEl.appendChild(im); });
+      decos.forEach(([src,left,w]) => { if(small && w>12 && left<50 && left>8) return; const im = new Image(); im.src = src; im.className = "deco"; im.alt = ""; im.style.left = left+"%"; if(left > 50) im.style.transform = "translateX(-100%)"; im.style.width = w+"px"; gEl.appendChild(im); });
       const conf = GROUNDS[gi] || GROUNDS[1];
       (small ? conf.small : conf.wide).forEach((id, k, arr) => {
         const p = PALS[id];

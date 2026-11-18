@@ -29,8 +29,8 @@ window.BMC_DEFAULTS = {
   facGuide: "https://www.youtube.com/watch?v=nCFDz6EDFBQ",
   youtube: "https://www.youtube.com/@%EB%B6%80%EC%95%88%EB%AF%B8%EB%94%94%EC%96%B4%EC%84%BC%ED%84%B0",
   instagram: "https://www.instagram.com/buan_media/",
-  stats: [ ["올해 교육", 48, "회"], ["참여 군민", 620, "명"], ["함께한 소상공인", 10, "곳"], ["제작 영상", 30, "편"] ],
-  statsNote: "예시 수치입니다. 실제 실적으로 바꿔 주세요."
+  participants: "",
+  statsNote: ""
 },
   data: {
   mall: [

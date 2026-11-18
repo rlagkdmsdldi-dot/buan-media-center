@@ -32,6 +32,7 @@
 [hidden]{display:none !important}
 html{font-size:112.5%;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 html.big{font-size:131%}
+html,body{overflow-x:clip}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}
 a{color:inherit}
@@ -110,7 +111,7 @@ section.block.soft{background:var(--soft)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
 .stat b{display:block;font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.03em}
 .stat span{color:var(--muted);font-weight:600}
-.stat:nth-child(1) b{color:var(--t-orange)}.stat:nth-child(2) b{color:var(--t-teal)}.stat:nth-child(3) b{color:var(--t-green)}.stat:nth-child(4) b{color:var(--t-pink)}
+.stat:nth-child(1) b{color:var(--t-orange)}.stat:nth-child(2) b{color:var(--t-teal)}.stat:nth-child(3) b{color:var(--t-pink)}.stat:nth-child(4) b{color:var(--t-purple)}
 .note-small{font-size:.75rem;color:var(--muted);text-align:center;margin-top:18px}
 
 /* 카드 그리드 */
@@ -355,8 +356,8 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 .film-card .prog{display:inline-block;margin-top:8px;font-size:.78rem;font-weight:700;color:#0f1724;background:#9cc8f0;border-radius:999px;padding:3px 10px}
 .film-card p{color:#a9b4c3;margin:8px 0 0;font-size:.92rem}
 @media (max-width:760px){.film-grid{grid-template-columns:1fr}}
-.call-note{display:flex;gap:8px;align-items:flex-start;background:#fff4e2;border:1px solid #f3dcb3;color:#7a4a08;border-radius:12px;padding:12px 14px;font-size:.9rem;margin:14px 0 0}
-.call-note::before{content:"☎";font-weight:800}
+.call-note{display:block;background:#fff4e2;border:1px solid #f3dcb3;color:#7a4a08;border-radius:12px;padding:12px 14px;font-size:.9rem;margin:14px 0 0}
+.call-note::before{content:"☎";font-weight:800;margin-right:6px}
 .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media (max-width:760px){.rules-grid{grid-template-columns:1fr}}
 </style>
@@ -447,7 +448,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 
   <section class="block" data-c="navy">
     <div class="wrap">
-      <div class="sec-head rv" style="justify-content:center;text-align:center"><div><h2 class="sec-title">숫자로 보는 올해의 미디어센터</h2></div></div>
+      <div class="sec-head rv" style="justify-content:center;text-align:center"><div><h2 class="sec-title" id="statsTitle">숫자로 보는 미디어센터</h2></div></div>
       <div class="stats rv" id="stats"></div>
       <p class="note-small" id="statsNote"></p>
     </div>
@@ -940,7 +941,17 @@ function renderAll(){
   $("#homeVideo").innerHTML = vids.slice(0,4).map(videoCard).join("");
   $("#homeNotice").innerHTML = noticeItems(DATA.notices, 5);
   $("#homeNotice").closest("section").hidden = !DATA.notices.length;
-  $("#stats").innerHTML = SETTINGS.stats.map(s=>`<div class="stat"><b data-to="${s[1]}">${Number(s[1]).toLocaleString()}</b><span>${esc(s[0])} (${esc(s[2])})</span></div>`).join("");
+  // 숫자는 관리자 페이지에 등록한 내용으로 자동 계산 (해가 바뀌면 그 해 기준으로 바뀜)
+  const YEAR = TODAY.getFullYear();
+  const st = [
+    [`${YEAR}년 미디어 교육`, DATA.classes.filter(c => String(c.start).startsWith(String(YEAR))).length, "개"],
+    ["군민 제작 영화", (DATA.films||[]).filter(f=>f.show!==false).length, "편"],
+    ["유튜브 영상", DATA.videos.filter(v=>v.show!==false).length, "편"]
+  ];
+  if(Number(SETTINGS.participants) > 0) st.splice(1, 0, [`${YEAR}년 참여 군민`, Number(SETTINGS.participants), "명"]);
+  $("#statsTitle").textContent = `숫자로 보는 ${YEAR} 미디어센터`;
+  $("#stats").style.gridTemplateColumns = innerWidth < 760 ? "" : `repeat(${st.length},1fr)`;
+  $("#stats").innerHTML = st.map(s=>`<div class="stat"><b data-to="${s[1]}">${Number(s[1]).toLocaleString()}</b><span>${esc(s[0])} (${esc(s[2])})</span></div>`).join("");
   $("#statsNote").textContent = SETTINGS.statsNote || "";
 
   // 소개
