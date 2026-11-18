@@ -235,10 +235,11 @@ const SECTIONS = {
     fields:[
       {k:"title",label:"양식 이름",type:"text",req:true},
       {k:"desc",label:"설명",type:"text",hint:"예: 별지 제1호서식"},
+      {k:"need",label:"꼭 내야 하나요?",type:"select",options:["필수","필요시"],hint:"필수: 위쪽 '꼭 필요한 양식'에(목록 순서대로) / 필요시: 아래 '필요한 경우에만'에 나와요"},
       {k:"cat",label:"어느 신청에 쓰는 양식인가요?",type:"select",options:["시설","장비","교육","공통","기타"],hint:"시설·장비·교육: 해당 신청 칸에 '원클릭 받기' 버튼으로 나와요 / 공통: 세 곳 모두 / 기타: 맨 아래 목록에만"},
       {k:"fileName",type:"hidden"},
       {k:"url",label:"파일",type:"file",req:true,full:true,hint:"컴퓨터에 있는 한글·PDF·워드·엑셀 파일을 바로 올리거나, 파일 링크를 붙여넣어요 (10MB 이하)"}
-    ], view:x=>({t:x.title, s:[x.cat||"분류 없음", x.desc].filter(Boolean).join(" · ")}) },
+    ], view:x=>({t:x.title, s:[x.cat||"분류 없음", x.need, x.desc].filter(Boolean).join(" · ")}) },
   equipment: { title:"대여 가능 장비", desc:"시설·장비 빌리기 화면의 장비 목록이에요.", add:"장비 추가",
     fields:[
       {k:"name",label:"장비 이름",type:"text",req:true},

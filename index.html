@@ -382,6 +382,8 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 .fq-item:hover{border-color:var(--c-teal)}
 .fq-item .ext{font-size:.7rem;font-weight:800;color:var(--t-teal);background:#e3f1f3;border-radius:6px;padding:2px 6px}
 .fq-item small{font-weight:600;color:var(--muted)}
+.fq-sub{font-size:.85rem;font-weight:700;color:var(--muted);margin:14px 0 8px}
+.fq-must .fq-item{background:#fff;border-color:#9fd3d9}
 .fq-item .dl{color:var(--t-teal)}
 .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media (max-width:760px){.rules-grid{grid-template-columns:1fr}}
@@ -1031,19 +1033,27 @@ function renderAll(){
   $("#memberBox").innerHTML = `<h4>정회원 가입 방법</h4><ul>${mem.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`;
   const forms = DATA.forms || [];
   // 양식을 어디에 보여줄지: 관리자에서 고른 '분류', 없으면 이름으로 추측
-  const catOf = f => f.cat || (/시설|대관/.test(f.title) ? "시설" : /장비|대여/.test(f.title) ? "장비" : /교육|수강/.test(f.title) ? "교육" : /동의서/.test(f.title) ? "공통" : "기타");
+  const catOf = f => f.cat || (/기준표/.test(f.title) ? "기타" : /동의서/.test(f.title) && /미성년|보호자/.test(f.title) ? "공통" : /시설|대관/.test(f.title) ? "시설" : /장비|대여/.test(f.title) ? "장비" : /교육|수강|초상권|반환/.test(f.title) ? "교육" : "기타");
+  // 꼭 내야 하는 양식 / 필요할 때만 내는 양식
+  const needOf = f => f.need || (/미성년|보호자|반환/.test(f.title) ? "필요시" : "필수");
+  const rankOf = f => /수강|사용\(감면\)|사용 신청/.test(f.title) ? 0 : /초상권/.test(f.title) ? 1 : /준수/.test(f.title) ? 2 : 3;
   const extOf = f => ((String(f.fileName||"").match(/\.(\w+)$/)||String(f.url).match(/\.(hwpx?|pdf|docx?|xlsx?|pptx?|zip)(?:\?|$)/i)||[,"파일"])[1]).toUpperCase();
+  const item = f => `<a class="fq-item" href="${esc(f.url)}" download target="_blank" rel="noopener"><span class="ext">${esc(extOf(f))}</span>${esc(f.title)}${f.desc && needOf(f)==="필요시" ? `<small>${esc(f.desc)}</small>` : ""}<span class="dl">↓</span></a>`;
   $$(".form-quick").forEach(box => {
     const cat = box.dataset.cat;
-    const list = forms.filter(f => f.url && (catOf(f) === cat || catOf(f) === "공통")).sort((a,b) => (catOf(a)==="공통") - (catOf(b)==="공통"));
+    const list = forms.filter(f => f.url && f.show !== false && (catOf(f) === cat || catOf(f) === "공통"));
+    const must = list.filter(f => needOf(f) === "필수").sort((a,b) => (f => f.cat ? 0 : rankOf(f))(a) - (f => f.cat ? 0 : rankOf(f))(b));
+    const opt = list.filter(f => needOf(f) === "필요시");
     box.hidden = !list.length;
-    box.innerHTML = `<div class="fq-head"><b>${cat === "교육" ? "교육 신청" : cat + (cat === "시설" ? " 대관" : " 대여")}에 필요한 양식</b>${list.length > 1 ? `<button type="button" class="fq-all">한 번에 모두 받기 ↓</button>` : ""}</div>
-      <div class="fq-list">${list.map(f => `<a class="fq-item" href="${esc(f.url)}" download target="_blank" rel="noopener"><span class="ext">${esc(extOf(f))}</span>${esc(f.title)}${catOf(f)==="공통" ? `<small>${esc(f.desc||"")}</small>` : ""}<span class="dl">↓</span></a>`).join("")}</div>`;
+    const title = cat === "교육" ? "교육 신청" : cat + (cat === "시설" ? " 대관" : " 대여");
+    box.innerHTML = (must.length ? `<div class="fq-head"><b>${title}에 꼭 필요한 양식</b>${must.length > 1 ? `<button type="button" class="fq-all">한 번에 모두 받기 ↓</button>` : ""}</div>
+      <div class="fq-list fq-must">${must.map(item).join("")}</div>` : "") +
+      (opt.length ? `<div class="fq-sub">필요한 경우에만 받으세요</div><div class="fq-list">${opt.map(item).join("")}</div>` : "");
     const all = $(".fq-all", box);
-    if(all) all.onclick = () => $$(".fq-item", box).forEach((a, i) => setTimeout(() => a.click(), i * 700));
+    if(all) all.onclick = () => $$(".fq-must .fq-item", box).forEach((a, i) => setTimeout(() => a.click(), i * 700));
   });
   $("#rent-forms").hidden = !forms.length;
-  $("#formsBox").innerHTML = forms.map(f => `<a class="form-file" href="${esc(f.url)}" download target="_blank" rel="noopener">
+  $("#formsBox").innerHTML = forms.filter(f => f.url && f.show !== false && !/기준표/.test(f.title)).map(f => `<a class="form-file" href="${esc(f.url)}" download target="_blank" rel="noopener">
       <span class="ext">${esc(((String(f.fileName||"").match(/\.(\w+)$/)||String(f.url).match(/\.(hwpx?|pdf|docx?|xlsx?|pptx?|zip)(?:\?|$)/i)||[,"파일"])[1]).toUpperCase())}</span>
       <span><b>${esc(f.title)}</b><small>${esc(f.desc||"")}</small></span><span class="dl" aria-hidden="true">↓</span></a>`).join("");
 
