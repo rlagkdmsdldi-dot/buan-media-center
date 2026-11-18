@@ -18,8 +18,6 @@ window.BMC_DEFAULTS = {
   pixelPals: true,
   eduOnlineOpen: false,
   eduApplyNote: "2027년부터 온라인 신청을 시작해요. 모집 인원의 절반은 온라인, 절반은 센터 방문으로 접수해요. 온라인 신청은 지금 준비 중이에요.",
-  mapLat: "35.7243508",
-  mapLng: "126.7251229",
   logoDark: "",
   eduApply: "https://www.buan.go.kr/reserve/board/list.buan?boardId=BBS_0000237&menuCd=DOM_000002001007000000&contentsSid=2754&cpath=%2Freserve",
   rentFacility: "https://www.buan.go.kr/reserve/index.buan?menuCd=DOM_000002002009000000",
@@ -29,8 +27,10 @@ window.BMC_DEFAULTS = {
   facGuide: "https://www.youtube.com/watch?v=nCFDz6EDFBQ",
   youtube: "https://www.youtube.com/@%EB%B6%80%EC%95%88%EB%AF%B8%EB%94%94%EC%96%B4%EC%84%BC%ED%84%B0",
   instagram: "https://www.instagram.com/buan_media/",
-  participants: "",
-  statsNote: ""
+  statsTitle: "숫자로 보는 부안미디어센터",
+  statsSince: "2025년 4월 4일 개관 이후 누적 · 2026년 9월 기준",
+  stats: [ ["미디어교육·체험", 82, "회"], ["교육·체험 참여", 707, "명"], ["콘텐츠 제작·송출", 76, "건"], ["시설 대관", 42, "일"], ["장비 대여", 72, "대"] ],
+  statsNote: "부안예술회관 내 483㎡ · 9실 · 2025. 4. 4. 개관"
 },
   data: {
   mall: [

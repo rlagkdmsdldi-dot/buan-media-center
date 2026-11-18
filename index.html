@@ -111,7 +111,7 @@ section.block.soft{background:var(--soft)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
 .stat b{display:block;font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.03em}
 .stat span{color:var(--muted);font-weight:600}
-.stat:nth-child(1) b{color:var(--t-orange)}.stat:nth-child(2) b{color:var(--t-teal)}.stat:nth-child(3) b{color:var(--t-pink)}.stat:nth-child(4) b{color:var(--t-purple)}
+.stat:nth-child(1) b{color:var(--t-orange)}.stat:nth-child(2) b{color:var(--t-teal)}.stat:nth-child(3) b{color:var(--t-pink)}.stat:nth-child(4) b{color:var(--t-purple)}.stat:nth-child(5) b{color:var(--t-green)}.stat:nth-child(6) b{color:var(--c-navy)}
 .note-small{font-size:.75rem;color:var(--muted);text-align:center;margin-top:18px}
 
 /* 카드 그리드 */
@@ -360,10 +360,23 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 .call-note::before{content:"☎";font-weight:800;margin-right:6px}
 .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media (max-width:760px){.rules-grid{grid-template-columns:1fr}}
+
+/* 스크롤 위치 표시: 필름 위를 움직이는 픽셀 카메라 (누르면 맨 위로) */
+.film-track{position:fixed;right:10px;top:120px;bottom:24px;width:14px;z-index:45;pointer-events:none;border-radius:4px;
+  background:repeating-linear-gradient(#1b2433 0 6px, #f4efe6 6px 9px, #1b2433 9px 14px);opacity:.18;transition:opacity .3s}
+.film-track.on{opacity:.35}
+.scroll-cam{position:fixed;right:0;top:120px;width:34px;height:30px;z-index:46;border:0;padding:0;background:none;cursor:pointer;image-rendering:pixelated;transition:opacity .3s}
+.scroll-cam img{width:100%;height:100%;image-rendering:pixelated;display:block}
+.scroll-cam .tip{position:absolute;right:110%;top:50%;transform:translateY(-50%);background:#1b2433;color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none}
+.scroll-cam:hover .tip,.scroll-cam:focus-visible .tip{opacity:1}
+.scroll-cam.top{opacity:.55}
+@media (max-width:760px){.film-track{right:4px;width:8px;top:90px}.scroll-cam{width:26px;height:23px;right:-4px}}
 </style>
 </head>
 <body>
 <a class="skip" href="#content">본문 바로가기</a>
+<div class="film-track" id="filmTrack" aria-hidden="true"></div>
+<button class="scroll-cam" id="scrollCam" type="button" aria-label="맨 위로 가기"><span class="tip">맨 위로</span><img alt="" id="scrollCamImg"></button>
 <div class="demo-bar" id="demoBar">미리보기 화면입니다. 소상공인과 실적 숫자는 예시이고, 관리자 페이지를 연결하면 실제 내용으로 바뀌어요.</div>
 
 <header class="site" id="siteHeader">
@@ -448,7 +461,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 
   <section class="block" data-c="navy">
     <div class="wrap">
-      <div class="sec-head rv" style="justify-content:center;text-align:center"><div><h2 class="sec-title" id="statsTitle">숫자로 보는 미디어센터</h2></div></div>
+      <div class="sec-head rv" style="justify-content:center;text-align:center"><div><h2 class="sec-title" id="statsTitle">숫자로 보는 부안미디어센터</h2><p class="sec-lead" id="statsSince" style="margin:10px auto 0"></p></div></div>
       <div class="stats rv" id="stats"></div>
       <p class="note-small" id="statsNote"></p>
     </div>
@@ -478,9 +491,8 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
     <div class="wrap">
       <div class="sec-head rv">
         <div><div class="eyebrow">오시는 길</div><h2 class="sec-title">부안미디어센터 찾아오기</h2><p class="sec-lead js-addr"></p></div>
-        <a class="more js-map" href="#" target="_blank" rel="noopener">네이버 지도에서 길찾기</a>
+        <a class="btn color js-map" href="#" target="_blank" rel="noopener" style="--mcb:#03c75a">네이버 지도에서 길찾기</a>
       </div>
-      <div class="map-frame rv js-mapframe"></div>
     </div>
   </section>
 </div>
@@ -503,7 +515,6 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
   <section class="block" id="about-map">
     <div class="wrap">
       <h2 class="sec-title rv" style="margin-bottom:28px">오시는 길</h2>
-      <div class="map-frame rv js-mapframe"></div>
       <div class="map-box rv" id="mapBox"></div>
     </div>
   </section>
@@ -941,17 +952,13 @@ function renderAll(){
   $("#homeVideo").innerHTML = vids.slice(0,4).map(videoCard).join("");
   $("#homeNotice").innerHTML = noticeItems(DATA.notices, 5);
   $("#homeNotice").closest("section").hidden = !DATA.notices.length;
-  // 숫자는 관리자 페이지에 등록한 내용으로 자동 계산 (해가 바뀌면 그 해 기준으로 바뀜)
-  const YEAR = TODAY.getFullYear();
-  const st = [
-    [`${YEAR}년 미디어 교육`, DATA.classes.filter(c => String(c.start).startsWith(String(YEAR))).length, "개"],
-    ["군민 제작 영화", (DATA.films||[]).filter(f=>f.show!==false).length, "편"],
-    ["유튜브 영상", DATA.videos.filter(v=>v.show!==false).length, "편"]
-  ];
-  if(Number(SETTINGS.participants) > 0) st.splice(1, 0, [`${YEAR}년 참여 군민`, Number(SETTINGS.participants), "명"]);
-  $("#statsTitle").textContent = `숫자로 보는 ${YEAR} 미디어센터`;
-  $("#stats").style.gridTemplateColumns = innerWidth < 760 ? "" : `repeat(${st.length},1fr)`;
-  $("#stats").innerHTML = st.map(s=>`<div class="stat"><b data-to="${s[1]}">${Number(s[1]).toLocaleString()}</b><span>${esc(s[0])} (${esc(s[2])})</span></div>`).join("");
+  // 숫자로 보는 미디어센터 (관리자 기본 설정에서 입력: 개관 이후 누적)
+  const st = (SETTINGS.stats||[]).filter(r => r && r[0]);
+  $("#statsTitle").textContent = SETTINGS.statsTitle || "숫자로 보는 부안미디어센터";
+  $("#statsSince").textContent = SETTINGS.statsSince || "";
+  $("#stats").style.gridTemplateColumns = innerWidth < 760 ? "" : `repeat(${Math.max(1,st.length)},1fr)`;
+  $("#stats").innerHTML = st.map(s=>`<div class="stat"><b data-to="${Number(s[1])||0}">${(Number(s[1])||0).toLocaleString()}</b><span>${esc(s[0])} (${esc(s[2]||"")})</span></div>`).join("");
+  $("#stats").closest("section").hidden = !st.length;
   $("#statsNote").textContent = SETTINGS.statsNote || "";
 
   // 소개
@@ -964,12 +971,7 @@ function renderAll(){
   $("#mapBox").innerHTML = `<dl><dt>주소</dt><dd>${esc(SETTINGS.address)}</dd><dt>전화</dt><dd>${esc(SETTINGS.phone)}</dd><dt>이메일</dt><dd>${esc(SETTINGS.email)}</dd></dl>
     <dl><dt>운영</dt><dd>${esc(SETTINGS.hours)}</dd><dt>휴관</dt><dd>${esc(SETTINGS.closed)}</dd><dt>지도</dt><dd><a class="btn ghost js-map" href="${esc(SETTINGS.mapLink)}" target="_blank" rel="noopener" style="min-height:44px;padding:10px 18px">네이버 지도에서 보기</a></dd></dl>`;
 
-  // 지도
-  const lat = SETTINGS.mapLat, lng = SETTINGS.mapLng;
-  $$(".js-mapframe").forEach(box => {
-    box.innerHTML = `<div class="map-fallback"><div>지도를 불러오는 중이에요.<br><a class="btn ghost js-map" style="margin-top:14px" href="${esc(SETTINGS.mapLink)}" target="_blank" rel="noopener">네이버 지도에서 보기</a></div></div>` +
-      (lat && lng ? `<iframe title="부안미디어센터 위치 지도" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${encodeURIComponent(lat+","+lng)}&hl=ko&z=16&output=embed"></iframe>` : "");
-  });
+  // 오시는 길
   $$(".js-addr").forEach(e => e.textContent = `${SETTINGS.address} · ${SETTINGS.phone}`);
 
   // 시설·장비
@@ -1073,8 +1075,27 @@ function countUp(el){
     requestAnimationFrame(step);
   });
 }
+function camSprite(rec){
+  const rows = ["....kkkk.......","...kgggk.......","kkkkkkkkkkkkk..","kooooooooooooka","kodddkkkdddddka","kodddkwwkddddka","kodddkwwkdrdd k".replace(" ","d"),"kodddkkkdddddka","kooooooooooooka","kkkkkkkkkkkkk.."];
+  const col = {k:"#1b2433", g:"#9aa3b0", o:"#E08020", d:"#3b4352", w:"#cfe8ff", r: rec ? "#e23b3b" : "#3b4352", a:"#1b2433"};
+  const c = document.createElement("canvas"); c.width = 15*3; c.height = rows.length*3; const g = c.getContext("2d");
+  rows.forEach((r,y) => [...r].forEach((ch,x) => { if(col[ch]){ g.fillStyle = col[ch]; g.fillRect(x*3,y*3,3,3); } }));
+  return c.toDataURL();
+}
+const CAM = [camSprite(true), camSprite(false)];
+let camBlink = 0;
 function onScroll(){
   $("#siteHeader").classList.toggle("compact", scrollY > 30);
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const p = max > 0 ? Math.min(1, scrollY / max) : 0;
+  const track = $("#filmTrack"), cam = $("#scrollCam");
+  if(track && cam){
+    const t = track.getBoundingClientRect();
+    cam.style.top = (t.top + p * (t.height - cam.offsetHeight)) + "px";
+    cam.classList.toggle("top", p < 0.02);
+    track.classList.toggle("on", p > 0.02);
+    $("#scrollCamImg").src = CAM[(++camBlink >> 3) % 2];
+  }
   if(reduced) return;
   const hero = $("#hero"); if(!hero || !hero.offsetParent) return;
   hero.style.setProperty("--p", Math.min(1, Math.max(0, scrollY / (hero.offsetHeight*.8))).toFixed(3));
@@ -1121,6 +1142,8 @@ $("#classModal").addEventListener("click", e => { if(e.target.id==="classModal")
 document.addEventListener("keydown", e => { if(e.key==="Escape" && $("#classModal").classList.contains("show")) closeModal(); });
 addEventListener("hashchange", route);
 addEventListener("scroll", onScroll, {passive:true});
+addEventListener("resize", onScroll);
+$("#scrollCam").addEventListener("click", () => scrollTo({top:0, behavior: reduced ? "auto" : "smooth"}));
 
 dots();
 loadData().finally(()=>{ renderAll(); route(); onScroll(); window.BMC_SETTINGS = SETTINGS; window.BMC_startPals && window.BMC_startPals(); });

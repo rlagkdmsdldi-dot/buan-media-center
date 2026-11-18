@@ -256,8 +256,6 @@ const SETTING_FIELDS = [
   {k:"closed",label:"휴관",type:"text"},
   {k:"operator",label:"운영 기관",type:"text"},
   {k:"mapLink",label:"지도 링크",type:"url"},
-  {k:"mapLat",label:"지도 위도",type:"text",hint:"네이버 지도 주소의 lat= 뒤 숫자"},
-  {k:"mapLng",label:"지도 경도",type:"text",hint:"네이버 지도 주소의 lng= 뒤 숫자"},
   {k:"mallName",label:"소상공인 메뉴 이름",type:"text",hint:"맨 위 메뉴에 보이는 이름"},
   {k:"pixelPals",label:"픽셀 캐릭터 보이기 (화면 아래를 걸어 다니며 안내해요)",type:"bool"},
   {k:"eduOnlineOpen",label:"온라인 교육 신청 열기 (켜면 '온라인으로 신청하기' 버튼이 활성화돼요)",type:"bool"},
@@ -270,7 +268,9 @@ const SETTING_FIELDS = [
   {k:"equipGuide",label:"장비 대여 방법 영상",type:"url",hint:"시설·장비 빌리기 화면 맨 위에 나와요"},
   {k:"youtube",label:"유튜브 채널",type:"url"},
   {k:"instagram",label:"인스타그램",type:"url"},
-  {k:"participants",label:"올해 참여 군민 수 (선택)",type:"text",hint:"숫자만 적어요. 비우면 안 보여요. 교육 개수·영화·유튜브 편수는 등록한 내용으로 자동 계산돼요"},
+  {k:"statsTitle",label:"숫자 칸 제목",type:"text",full:true},
+  {k:"statsSince",label:"숫자 기준 (제목 아래)",type:"text",full:true,hint:"예: 2025년 4월 4일 개관 이후 누적 · 2026년 12월 기준. 숫자를 바꿀 때 기준 월도 같이 바꿔 주세요"},
+  {k:"stats",label:"숫자로 보는 미디어센터 (항목 · 숫자 · 단위, 최대 6개)",type:"stats",full:true,hint:"이름을 비우면 그 줄은 안 나와요"},
   {k:"statsNote",label:"숫자 아래 작은 안내 글",type:"text",full:true,hint:"비우면 안 보여요"}
 ];
 const MENU = [
@@ -378,8 +378,8 @@ function fieldHTML(f, v, prefix="f"){
       <div class="img-btns"><button type="button" class="btn ghost small" data-upload="${id}">컴퓨터에서 사진 올리기</button>
       <input type="url" id="${id}" data-k="${f.k}" value="${esc(v)}" placeholder="또는 사진 주소 붙여넣기(구글 드라이브 링크 가능)">
       ${v?`<button type="button" class="btn ghost small" data-clear="${id}">사진 빼기</button>`:""}</div></div>${hint}</div>`;
-  if(f.type==="stats"){ const rows = (v && v.length ? v : [["","",""],["","",""],["","",""],["","",""]]).slice(0,4);
-    while(rows.length<4) rows.push(["","",""]);
+  if(f.type==="stats"){ const rows = (v && v.length ? v : []).slice(0,6);
+    while(rows.length<6) rows.push(["","",""]);
     return `<div class="f${full}"><span class="lb">${esc(f.label)}</span>${rows.map((r,i)=>`<div class="stats-grid" data-stat="${i}"><input type="text" value="${esc(r[0])}" placeholder="예: 올해 교육" aria-label="이름 ${i+1}"><input type="number" value="${esc(r[1])}" placeholder="48" aria-label="숫자 ${i+1}"><input type="text" value="${esc(r[2])}" placeholder="회" aria-label="단위 ${i+1}"></div>`).join("")}${hint}</div>`; }
   const t = f.type==="url" ? "url" : f.type==="date" ? "date" : "text";
   return `<div class="f${full}">${lab}<input type="${t}" id="${id}" data-k="${f.k}" value="${esc(v)}"${req}${f.list?` list="${f.list}"`:""}>${hint}</div>`;
