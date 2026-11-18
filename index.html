@@ -92,37 +92,12 @@ section.block.soft{background:var(--soft)}
 
 /* 히어로 */
 
-/* 첫 화면 그림: 시간·날씨에 따라 아침, 낮, 노을, 밤, 흐림, 비, 눈 */
-.hero.has-banner{padding-top:0}
-.hero.has-banner .hero-logo{display:none}
-.hero.has-banner .wrap{padding-top:36px}
-.hero.has-banner h1{margin-top:0}
-.hero-banner{position:relative;overflow:hidden;background:#bfe3fb}
-.hero-banner img{display:block;width:100%;height:clamp(250px,46.6vw,760px);object-fit:cover;object-position:50% 40%;transition:filter 2s}
-.fx-tint,.fx-glow,.fx-sky{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity 2s}
-.fx-tint{mix-blend-mode:multiply}
-.hero-banner img.fx-lights{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 2s;filter:none}
-.hero-banner[data-time="night"] img.fx-lights{opacity:1}
-.hero-banner[data-time="sunset"] img.fx-lights{opacity:.4}
-.hero-banner img.fx-logo{filter:drop-shadow(0 0 6px rgba(255,255,255,.35))}
-.hero-banner[data-time="sunset"] img.fx-logo,.hero-banner[data-time="night"] img.fx-logo{opacity:1}
-.hero-banner.wx-rain[data-time="day"] img.fx-lights{opacity:.35}
-.fx-glow{mix-blend-mode:screen;background:radial-gradient(ellipse 12% 7% at 51% 81%,rgba(255,200,120,.7),transparent 75%),radial-gradient(ellipse 30% 22% at 50% 68%,rgba(255,190,110,.22),transparent 70%)}
-.hero-banner[data-time="dawn"] .fx-tint{opacity:.55;background:linear-gradient(#ffb8a8,#ffd9c2 45%,#fff3e6 75%,#fff)}
-.hero-banner[data-time="sunset"] .fx-tint{opacity:.85;background:linear-gradient(#7d6bd6 0%,#c77dc9 22%,#ff86a6 42%,#ffa36b 60%,#ffd2b0 74%,#fff2ea 88%,#fff)}
-.hero-banner[data-time="sunset"] #heroImg{filter:saturate(1.15) contrast(1.03)}
-.hero-banner[data-time="sunset"] .fx-sky{opacity:1}
-
-.hero-banner[data-time="night"] .fx-tint{opacity:.9;background:linear-gradient(#141c44,#26306a 50%,#3b4778 80%,#4a5684)}
-.hero-banner[data-time="night"] .fx-glow{opacity:0}
-.hero-banner[data-time="night"] .fx-sky,.hero-banner.wx-rain .fx-sky,.hero-banner.wx-snow .fx-sky{opacity:1}
-.hero-banner.wx-cloud #heroImg{filter:saturate(.72) brightness(.97)}
-.hero-banner.wx-rain #heroImg{filter:saturate(.6) brightness(.86)}
-.hero-banner.wx-snow #heroImg{filter:saturate(.75) brightness(1.02)}
-.hero-banner.wx-cloud[data-time="day"] .fx-tint,.hero-banner.wx-rain[data-time="day"] .fx-tint{opacity:.45;background:linear-gradient(#aeb7c4,#d3d8df 60%,#eef0f3)}
-.fx-badge{position:absolute;right:14px;bottom:12px;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#13233a;border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-@media (max-width:760px){.fx-badge{font-size:.74rem;right:8px;bottom:8px;padding:4px 10px}}
-@media (prefers-reduced-motion: reduce){.fx-tint,.fx-glow,.fx-sky,.hero-banner img{transition:none}}
+/* 첫 화면 하늘: 부안 시간에 따라 아침·낮·노을, 날씨에 따라 비·눈 */
+.hero{transition:background 2s}
+.hero[data-time="dawn"]{background:linear-gradient(#ffe6dc,#fff4ee 140px,#ffffff 260px)}
+.hero[data-time="sunset"]{background:linear-gradient(#f6b8c8,#ffd0b0 120px,#fff1e6 220px,#ffffff 300px)}
+.hero.wx-cloud{background:linear-gradient(#e3e8ee,#ffffff 240px)}
+.fx-sky{position:absolute;left:0;top:0;width:100%;height:300px;pointer-events:none;z-index:-1}
 .apply-grid.one{grid-template-columns:1fr;max-width:560px}
 .hero{position:relative;text-align:center;padding:96px 0 0;overflow:hidden;isolation:isolate;background:linear-gradient(#eaf5ff,#ffffff 230px)}
 .hero .wrap{padding-bottom:56px}
@@ -465,16 +440,8 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 
 <!-- ========== 홈 ========== -->
 <div class="page" data-page="home">
-  <section class="hero has-banner" id="hero">
-    <div class="hero-banner" id="heroBanner" data-time="day">
-      <img id="heroImg" src="hero-1400.jpg" srcset="hero-800.jpg 800w, hero-1400.jpg 1400w, hero-2400.jpg 2400w" sizes="100vw" alt="부안미디어센터 건물 앞에서 사진을 찍고 영화를 촬영하는 사람들 그림" fetchpriority="high">
-      <div class="fx-tint" aria-hidden="true"></div>
-      <img class="fx-lights" id="heroLights" src="lights-1400.png" srcset="lights-800.png 800w, lights-1400.png 1400w, lights-2400.png 2400w" sizes="100vw" alt="" aria-hidden="true">
-      <div class="fx-glow" aria-hidden="true"></div>
-      <img class="fx-lights fx-logo" id="heroLogoLayer" src="herologo-1400.png" srcset="herologo-800.png 800w, herologo-1400.png 1400w, herologo-2400.png 2400w" sizes="100vw" alt="" aria-hidden="true">
-      <canvas class="fx-sky" id="fxSky" aria-hidden="true"></canvas>
-      <span class="fx-badge" id="fxBadge" hidden></span>
-    </div>
+  <section class="hero" id="hero" data-time="day">
+    <canvas class="fx-sky" id="fxSky" aria-hidden="true"></canvas>
     <div class="wrap">
       <img class="hero-logo" id="logoHero" src="logo.png" alt="부안미디어센터">
       <h1 id="heroTitle">배우고, 찍고, 나누는<br><span class="grad">부안의 미디어 놀이터</span></h1>
@@ -617,17 +584,17 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
       <p class="sec-lead" style="margin:0 0 32px" id="eduApplyLead"></p>
       <div class="form-quick" data-cat="교육"></div>
       <div class="apply-grid">
-        <div class="apply-card" id="onlineCard">
-          <span class="st" id="onlineState"></span>
-          <h3>온라인 신청</h3>
-          <p>모집 인원의 절반을 온라인으로 받아요. 신청과 교육비 결제를 한 번에 할 수 있어요.</p>
-          <a class="btn color" id="eduApplyBtn" href="#" target="_blank" rel="noopener">온라인으로 신청하기</a>
-        </div>
         <div class="apply-card">
           <span class="st st-진행중">방문 접수</span>
           <h3>센터 방문 신청</h3>
           <p id="visitText">나머지 절반은 센터에 직접 오셔서 신청해요. 교육 수강 신청서를 작성해 주세요.</p>
           <p class="apply-meta"><b class="js-hours"></b><br>문의 <b class="js-phone"></b></p>
+        </div>
+        <div class="apply-card" id="onlineCard">
+          <span class="st" id="onlineState"></span>
+          <h3>온라인 신청</h3>
+          <p id="onlineText">모집 인원의 절반을 온라인으로 받아요. 신청과 교육비 결제를 한 번에 할 수 있어요.</p>
+          <a class="btn color" id="eduApplyBtn" href="#" target="_blank" rel="noopener">온라인으로 신청하기</a>
         </div>
       </div>
       <p class="call-note" style="margin-top:18px">모집 정원이 다 찼을 수 있어요. 신청하기 전에 센터(<b class="js-phone"></b>)로 꼭 전화해서 확인해 주세요.</p>
@@ -1012,7 +979,6 @@ function renderAll(){
   // 예전에 올렸던 흐린 로고(1i5Lyjvr…)는 쓰지 않고 새 로고(logo.png)를 보여줘요
   const LOGO_OLD = /1i5Lyjvrur7qFGm8xba-cHmz96KtJ9oeI/;
   if(SETTINGS.logo && !LOGO_OLD.test(SETTINGS.logo)) $$("#logoTop,#logoHero").forEach(i=>i.src=fixImg(SETTINGS.logo));
-  if(SETTINGS.heroImg){ const hi = $("#heroImg"); hi.removeAttribute("srcset"); hi.src = fixImg(SETTINGS.heroImg); $("#heroLights").remove(); $("#heroLogoLayer").remove(); }
   const hl = $("#logoHero"), fitHero = () => { if(hl.naturalWidth) hl.style.maxWidth = Math.max(240, Math.round(hl.naturalWidth * 1.5)) + "px"; };
   hl.complete ? fitHero() : hl.addEventListener("load", fitHero, {once:true});
   if(SETTINGS.logoDark) $("#logoFoot").src = fixImg(SETTINGS.logoDark);
@@ -1112,15 +1078,14 @@ function renderAll(){
   // 교육 신청
   const open = !!SETTINGS.eduOnlineOpen && !!SETTINGS.eduApply;
   $("#eduApplyLead").textContent = open ? (SETTINGS.eduApplyNote || "") : "올해 교육은 센터 방문으로만 신청받아요. 2027년부터는 모집 인원의 절반을 온라인으로도 받을 예정이에요.";
-  $("#onlineCard").hidden = !open;
-  $(".apply-grid").classList.toggle("one", !open);
+  $("#onlineText").textContent = open ? "모집 인원의 절반을 온라인으로 받아요. 신청과 교육비 결제를 한 번에 할 수 있어요." : "온라인 접수는 지금 준비 중이에요. 2027년부터 모집 인원의 절반을 온라인으로도 받을 예정이에요.";
   $("#splitEx").hidden = !open;
   $("#visitText").textContent = open ? "나머지 절반은 센터에 직접 오셔서 신청해요. 교육 수강 신청서를 작성해 주세요." : "센터에 직접 오셔서 교육 수강 신청서를 작성해 주세요. 위 양식을 미리 받아 작성해 오셔도 돼요.";
   $("#onlineState").className = "st " + (open ? "st-모집중" : "st-마감");
   $("#onlineState").textContent = open ? "신청 가능" : "준비 중";
   const eb = $("#eduApplyBtn");
   eb.href = open ? SETTINGS.eduApply : "#edu-apply";
-  eb.textContent = open ? "온라인으로 신청하기" : "온라인 신청 준비 중";
+  eb.textContent = open ? "온라인으로 신청하기" : "온라인 접수 준비 중";
   eb.setAttribute("aria-disabled", open ? "false" : "true");
   $$(".js-hours").forEach(e=>e.textContent = `${SETTINGS.hours} (${SETTINGS.closed})`);
 
@@ -1257,78 +1222,47 @@ $("#scrollCam").addEventListener("click", () => scrollTo({top:0, behavior: reduc
 dots();
 loadData().finally(()=>{ renderAll(); route(); onScroll(); window.BMC_SETTINGS = SETTINGS; window.BMC_startPals && window.BMC_startPals(); });
 
-/* ---------- 첫 화면 그림: 부안 시간과 날씨 ---------- */
+/* ---------- 첫 화면 하늘: 부안 시간과 날씨 ---------- */
 (function heroSky(){
-  const box = document.getElementById("heroBanner"); if(!box) return;
-  const cv = document.getElementById("fxSky"), g = cv.getContext("2d"), badge = document.getElementById("fxBadge");
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const LAT = 35.7243508, LNG = 126.7251229;
-  // 해 뜨고 지는 시각(분) — 날씨를 못 받아오면 달마다 대략값을 써요
-  const ROUGH = [[455,1065],[440,1095],[410,1120],[370,1145],[340,1170],[325,1190],[335,1190],[355,1165],[380,1125],[405,1085],[430,1055],[452,1050]];
-  // 미리보기용: 주소 끝에 ?sky=night 또는 ?sky=sunset&wx=snow 처럼 붙이면 바로 확인할 수 있어요
+  const box = document.getElementById("hero"), cv = document.getElementById("fxSky"); if(!box || !cv) return;
+  const g = cv.getContext("2d"), reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // 미리보기: 주소 끝에 ?sky=sunset 또는 ?wx=snow
   const Q = new URLSearchParams(location.search), FORCE_SKY = Q.get("sky"), FORCE_WX = Q.get("wx");
-  let rise = null, set = null, wx = FORCE_WX || "clear", temp = null, parts = [], stars = [];
-  const seoulMin = () => { const p = new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Seoul",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()).split(":"); return (+p[0]%24)*60 + +p[1]; };
-  const seoulMonth = () => +new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Seoul",month:"numeric"}).format(new Date()) - 1;
+  const ROUGH = [[455,1065],[440,1095],[410,1120],[370,1145],[340,1170],[325,1190],[335,1190],[355,1165],[380,1125],[405,1085],[430,1055],[452,1050]];
+  let rise = null, set = null, wx = FORCE_WX || "clear", parts = [];
+  const now = () => { const f = new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Seoul",hour:"2-digit",minute:"2-digit",month:"numeric",hour12:false}).formatToParts(new Date()); const v = k => +f.find(x=>x.type===k).value; return {m:(v("hour")%24)*60+v("minute"), mo:v("month")-1}; };
   function phase(){
     if(FORCE_SKY) return FORCE_SKY;
-    const m = seoulMin(), [r0, s0] = ROUGH[seoulMonth()], r = rise ?? r0, st = set ?? s0;
-    if(m < r - 40 || m > st + 45) return "night";
-    if(m < r + 60) return "dawn";
-    if(m > st - 70) return "sunset";
-    return "day";
+    const {m, mo} = now(), r = rise ?? ROUGH[mo][0], st = set ?? ROUGH[mo][1];
+    if(m >= r - 30 && m < r + 60) return "dawn";
+    if(m > st - 70 && m <= st + 30) return "sunset";
+    return "day";   // 밤에는 어둡게 하지 않고 낮 하늘 그대로
   }
-  const LABEL = {dawn:"아침", day:"낮", sunset:"노을 지는 저녁", night:"밤"};
-  const WXL = {clear:"맑음", cloud:"흐림", rain:"비", snow:"눈"};
-  function apply(){
-    const ph = phase();
-    box.dataset.time = ph;
-    box.classList.toggle("wx-cloud", wx === "cloud" || wx === "rain");
-    box.classList.toggle("wx-rain", wx === "rain");
-    box.classList.toggle("wx-snow", wx === "snow");
-    const w = wx === "clear" && ph === "night" ? "맑은" : "";
-    badge.textContent = `지금 부안 · ${wx === "clear" ? (w ? "맑은 밤" : LABEL[ph]) : WXL[wx]}${temp != null ? ` ${Math.round(temp)}°` : ""}`;
-    badge.hidden = false;
-    seed();
-  }
-  function size(){ const r = box.getBoundingClientRect(), d = Math.min(2, devicePixelRatio||1); cv.width = r.width*d; cv.height = r.height*d; g.setTransform(d,0,0,d,0,0); seed(); }
-  function seed(){
-    const W = cv.width/(Math.min(2,devicePixelRatio||1)), H = cv.height/(Math.min(2,devicePixelRatio||1));
-    stars = Array.from({length: Math.round(W/14)}, () => ({x: Math.random()*W, y: Math.random()*H*.42, r: Math.random()*1.3+.4, t: Math.random()*6}));
-    const n = wx === "rain" ? Math.round(W/5) : wx === "snow" ? Math.round(W/9) : 0;
-    parts = Array.from({length:n}, () => ({x: Math.random()*W, y: Math.random()*H, v: wx === "rain" ? 520+Math.random()*260 : 28+Math.random()*34, r: Math.random()*2+1.2, s: Math.random()*6}));
-  }
+  function size(){ const d = Math.min(2, devicePixelRatio||1), w = box.clientWidth; cv.width = w*d; cv.height = 300*d; g.setTransform(d,0,0,d,0,0); seed(); }
+  function seed(){ const W = box.clientWidth, n = wx === "rain" ? Math.round(W/9) : wx === "snow" ? Math.round(W/14) : 0;
+    parts = Array.from({length:n}, () => ({x:Math.random()*W, y:Math.random()*300, v: wx === "rain" ? 380+Math.random()*200 : 22+Math.random()*26, r:Math.random()*1.8+1.2, s:Math.random()*6})); }
+  function apply(){ box.dataset.time = phase(); box.classList.toggle("wx-cloud", wx === "cloud" || wx === "rain" || wx === "snow"); seed(); }
   let last = performance.now();
-  function frame(now){
-    const dt = Math.min(.05,(now-last)/1000); last = now;
-    const d = Math.min(2,devicePixelRatio||1), W = cv.width/d, H = cv.height/d;
-    g.clearRect(0,0,W,H);
-    if(box.dataset.time === "night" && wx !== "rain"){
-      stars.forEach(s => { const a = .55 + .45*Math.sin(now/700 + s.t); g.fillStyle = `rgba(255,255,240,${reduced ? .9 : a})`; g.fillRect(s.x, s.y, s.r*1.6, s.r*1.6); });
-      if(wx === "clear"){ const mx = W*.82, my = H*.16, mr = Math.max(12, W*.022); g.fillStyle = "#fff6d5"; g.beginPath(); g.arc(mx,my,mr,0,7); g.fill(); g.fillStyle = "rgba(255,246,213,.18)"; g.beginPath(); g.arc(mx,my,mr*2.2,0,7); g.fill(); }
-    }
-    if(box.dataset.time === "sunset" && wx === "clear"){ const sx = W*.8, sy = H*.6, sr = Math.max(26, W*.04);
-      const grd = g.createRadialGradient(sx,sy,0,sx,sy,sr*3.2); grd.addColorStop(0,"rgba(255,236,170,.95)"); grd.addColorStop(.3,"rgba(255,170,90,.55)"); grd.addColorStop(1,"rgba(255,120,90,0)");
-      g.fillStyle = grd; g.beginPath(); g.arc(sx,sy,sr*3.2,0,7); g.fill(); g.fillStyle = "#ffe9a8"; g.beginPath(); g.arc(sx,sy,sr,0,7); g.fill(); }
-    if(wx === "rain"){ g.strokeStyle = "rgba(220,232,255,.55)"; g.lineWidth = 1.2; g.beginPath();
-      parts.forEach(p => { if(!reduced){ p.y += p.v*dt; p.x -= p.v*dt*.18; if(p.y > H){ p.y = -10; p.x = Math.random()*W*1.2; } } g.moveTo(p.x,p.y); g.lineTo(p.x-3, p.y+14); }); g.stroke(); }
-    if(wx === "snow"){ g.fillStyle = "rgba(255,255,255,.95)"; g.shadowColor = "rgba(70,90,130,.45)"; g.shadowBlur = 3;
-      parts.forEach(p => { if(!reduced){ p.y += p.v*dt; p.x += Math.sin(now/900 + p.s)*.4; if(p.y > H){ p.y = -6; p.x = Math.random()*W; } } g.beginPath(); g.arc(p.x,p.y,p.r,0,7); g.fill(); }); g.shadowBlur = 0; }
-    if(!reduced) requestAnimationFrame(frame);
+  function frame(t){
+    const dt = Math.min(.05,(t-last)/1000); last = t; const W = box.clientWidth;
+    g.clearRect(0,0,W,300);
+    if(wx === "rain"){ g.strokeStyle = "rgba(120,150,190,.35)"; g.lineWidth = 1; g.beginPath();
+      parts.forEach(p => { if(!reduced){ p.y += p.v*dt; p.x -= p.v*dt*.15; if(p.y > 300){ p.y = -10; p.x = Math.random()*W*1.1; } } g.moveTo(p.x,p.y); g.lineTo(p.x-2,p.y+11); }); g.stroke(); }
+    if(wx === "snow"){ g.fillStyle = "rgba(255,255,255,.95)"; g.shadowColor = "rgba(90,110,150,.4)"; g.shadowBlur = 3;
+      parts.forEach(p => { if(!reduced){ p.y += p.v*dt; p.x += Math.sin(t/900+p.s)*.35; if(p.y > 300){ p.y = -6; p.x = Math.random()*W; } } g.beginPath(); g.arc(p.x,p.y,p.r,0,7); g.fill(); }); g.shadowBlur = 0; }
+    if(!reduced && parts.length) requestAnimationFrame(frame);
   }
   size(); addEventListener("resize", size);
-  if(window.ResizeObserver) new ResizeObserver(() => { const r = box.getBoundingClientRect(), d = Math.min(2, devicePixelRatio||1); if(Math.round(r.width*d) !== cv.width || Math.round(r.height*d) !== cv.height) size(); }).observe(box);
-  apply(); requestAnimationFrame(frame);
-  setInterval(apply, 5*60*1000);
-  // 날씨: Open-Meteo(무료, 키 없음)
-  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LNG}&current=weather_code,temperature_2m&daily=sunrise,sunset&timezone=Asia%2FSeoul&forecast_days=1`)
+  if(window.ResizeObserver) new ResizeObserver(() => { if(Math.round(box.clientWidth*Math.min(2,devicePixelRatio||1)) !== cv.width) size(); }).observe(box);
+  const run = () => { apply(); last = performance.now(); requestAnimationFrame(frame); };
+  run(); setInterval(apply, 5*60*1000);
+  fetch("https://api.open-meteo.com/v1/forecast?latitude=35.7243508&longitude=126.7251229&current=weather_code&daily=sunrise,sunset&timezone=Asia%2FSeoul&forecast_days=1")
     .then(r => r.json()).then(j => {
       const c = j.current && j.current.weather_code;
-      if(!FORCE_WX) wx = c == null ? "clear" : c <= 1 ? "clear" : c <= 48 ? "cloud" : (c >= 71 && c <= 77) || c === 85 || c === 86 ? "snow" : "rain";
-      temp = j.current ? j.current.temperature_2m : null;
-      const hm = t => { const m = /T(\d\d):(\d\d)/.exec(t||""); return m ? +m[1]*60 + +m[2] : null; };
+      if(!FORCE_WX && c != null) wx = c <= 1 ? "clear" : c <= 48 ? "cloud" : (c >= 71 && c <= 77) || c === 85 || c === 86 ? "snow" : "rain";
+      const hm = x => { const m = /T(\d\d):(\d\d)/.exec(x||""); return m ? +m[1]*60 + +m[2] : null; };
       rise = hm(j.daily && j.daily.sunrise && j.daily.sunrise[0]); set = hm(j.daily && j.daily.sunset && j.daily.sunset[0]);
-      apply(); if(reduced) requestAnimationFrame(frame);
+      run();
     }).catch(() => {});
 })();
 </script>

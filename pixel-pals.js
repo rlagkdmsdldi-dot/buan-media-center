@@ -190,7 +190,7 @@
     let drone = null;
     if(hero){
       const sky = document.createElement("div"); sky.className = "px-sky"; hero.prepend(sky);
-      if(!document.getElementById("heroBanner")) [[16,140,0],[70,190,-70],[34,230,-150]].forEach(([top,dur,delay], i) => {
+      [[16,140,0],[70,190,-70],[34,230,-150]].forEach(([top,dur,delay], i) => {
         if(small && i===2) return;
         const c = new Image(); c.src = CLOUD; c.className = "px-cloud"; c.alt = "";
         c.style.top = top+"px"; c.style.width = (i===1?66:84)+"px"; c.style.animationDuration = dur+"s"; c.style.animationDelay = delay+"s";
