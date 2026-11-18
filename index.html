@@ -133,7 +133,9 @@ section.block.soft{background:var(--soft)}
 .card-desc{color:var(--muted);font-size:.88rem;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .badges{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .badge{font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--soft);color:var(--ink)}
-.badge.link{color:#fff}
+.badge.link{color:#fff;text-decoration:none}
+.badge.link:hover{filter:brightness(1.1)}
+.shop-main{display:block;text-decoration:none;color:inherit}
 .lt-스마트스토어{background:#03a94d}.lt-블로그{background:#1e9e5a}.lt-유튜브{background:#d93025}.lt-인스타그램{background:#c13584}.lt-기타{background:#56606e}
 
 /* 필터 칩 */
@@ -760,16 +762,23 @@ const stClass = s => s==="모집예정" ? "모집중" : s;
 /* ---------- 카드 ---------- */
 function mallCard(m){
   const label = m.name.replace(/^예시\)\s*/,"");
-  const type = ["스마트스토어","블로그","유튜브","인스타그램"].includes(m.type) ? m.type : "기타";
-  return `<a class="card rv" href="${esc(m.link||"#")}" target="_blank" rel="noopener">
-    <div class="thumb">${imgOr(m.img, label, m.cat)}
-      <div class="avatar" style="background:${pick(m.name+"o")}">${m.owner?`<img src="${esc(fixImg(m.owner))}" alt="">`:esc((m.ownerName||label).slice(0,1))}</div>
-    </div>
-    <div class="card-body">
-      <div class="card-title">${esc(m.name)}</div>
-      <div class="card-desc">${esc(m.desc)}</div>
-      <div class="badges"><span class="badge link lt-${type}">${esc(m.type||"바로가기")}</span>${m.cat?`<span class="badge">${esc(m.cat)}</span>`:""}</div>
-    </div></a>`;
+  const TYPES = ["스마트스토어","블로그","유튜브","인스타그램"];
+  const links = [[m.link,m.type],[m.link2,m.type2],[m.link3,m.type3]].filter(l => l[0]);
+  const main = links[0] ? links[0][0] : "#";
+  const chips = links.map(([u,t]) => { const c = TYPES.includes(t) ? t : "기타";
+    return `<a class="badge link lt-${c}" href="${esc(u)}" target="_blank" rel="noopener">${esc(t||"바로가기")} ↗</a>`; }).join("");
+  return `<div class="card shop rv">
+    <a class="shop-main" href="${esc(main)}" target="_blank" rel="noopener">
+      <div class="thumb">${imgOr(m.img, label, m.cat)}
+        <div class="avatar" style="background:${pick(m.name+"o")}">${m.owner?`<img src="${esc(fixImg(m.owner))}" alt="">`:esc((m.ownerName||label).slice(0,1))}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${esc(m.name)}</div>
+        <div class="card-desc">${esc(m.desc)}</div>
+      </div>
+    </a>
+    <div class="badges" style="padding:0 4px">${chips}${m.cat?`<span class="badge">${esc(m.cat)}</span>`:""}</div>
+  </div>`;
 }
 function ytId(url){ const m = String(url||"").match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
 function videoCard(v){

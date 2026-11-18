@@ -34,7 +34,7 @@ window.BMC_DEFAULTS = {
 },
   data: {
   mall: [
-    {show:true,name:"예시) 곰소 바다젓갈",desc:"3대째 이어온 곰소 천일염 젓갈 선물세트",img:"",owner:"",ownerName:"김",link:"https://smartstore.naver.com",type:"스마트스토어",cat:"수산물"},
+    {show:true,name:"예시) 곰소 바다젓갈",desc:"3대째 이어온 곰소 천일염 젓갈 선물세트",img:"",owner:"",ownerName:"김",link:"https://smartstore.naver.com",type:"스마트스토어",link2:"https://blog.naver.com",type2:"블로그",link3:"https://www.youtube.com",type3:"유튜브",cat:"수산물"},
     {show:true,name:"예시) 변산 오디농원",desc:"직접 키운 오디로 만든 오디즙과 잼",img:"",owner:"",ownerName:"이",link:"https://blog.naver.com",type:"블로그",cat:"농산물"},
     {show:true,name:"예시) 줄포 손두부",desc:"매일 아침 국산 콩으로 만드는 손두부",img:"",owner:"",ownerName:"박",link:"https://www.youtube.com",type:"유튜브",cat:"가공식품"},
     {show:true,name:"예시) 격포 노을카페",desc:"바다가 보이는 카페의 수제 디저트",img:"",owner:"",ownerName:"정",link:"https://smartstore.naver.com",type:"스마트스토어",cat:"카페·식당"}

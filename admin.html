@@ -172,7 +172,7 @@ let STATE = {};
 /* ---------- 항목 정의 ---------- */
 const LINK_TYPES = ["스마트스토어","블로그","유튜브","인스타그램","기타"];
 const SECTIONS = {
-  mall: { title:"소상공인 라이브커머스", desc:"라이브커머스 교육에 참여한 가게를 등록해요. 카드를 누르면 '링크'로 이동해요.", add:"가게 추가",
+  mall: { title:"소상공인 라이브커머스", desc:"라이브커머스 교육에 참여한 가게를 등록해요. 링크는 3개까지 넣을 수 있고, 카드를 누르면 링크 1로 이동해요.", add:"가게 추가",
     fields:[
       {k:"show",label:"홈페이지에 보이기",type:"bool",def:true},
       {k:"name",label:"가게 이름",type:"text",req:true},
@@ -181,9 +181,13 @@ const SECTIONS = {
       {k:"desc",label:"한 줄 소개",type:"text",full:true},
       {k:"img",label:"상품 사진",type:"image"},
       {k:"owner",label:"소상공인 사진",type:"image",hint:"얼굴 사진은 게시 동의를 받고 올려 주세요"},
-      {k:"link",label:"이동할 링크",type:"url",req:true,full:true,hint:"스마트스토어, 블로그, 유튜브 주소 등"},
-      {k:"type",label:"링크 종류",type:"select",options:LINK_TYPES}
-    ], view:x=>({img:x.img, t:x.name, s:[x.cat,x.type].filter(Boolean).join(" · "), off:x.show===false}) },
+      {k:"link",label:"링크 1 (대표)",type:"url",req:true,hint:"카드를 누르면 이 링크로 이동해요"},
+      {k:"type",label:"링크 1 종류",type:"select",options:LINK_TYPES},
+      {k:"link2",label:"링크 2 (선택)",type:"url"},
+      {k:"type2",label:"링크 2 종류",type:"select",options:LINK_TYPES},
+      {k:"link3",label:"링크 3 (선택)",type:"url"},
+      {k:"type3",label:"링크 3 종류",type:"select",options:LINK_TYPES}
+    ], view:x=>({img:x.img, t:x.name, s:[x.cat,[x.link&&x.type,x.link2&&x.type2,x.link3&&x.type3].filter(Boolean).join("·")].filter(Boolean).join(" · "), off:x.show===false}) },
   films: { title:"군민 제작 영화", desc:"영화 교육에서 군민이 만든 작품이에요. 유튜브 주소만 넣으면 큰 썸네일이 나와요. 위에 있을수록 먼저 보여요.", add:"작품 추가",
     fields:[
       {k:"show",label:"홈페이지에 보이기",type:"bool",def:true},
