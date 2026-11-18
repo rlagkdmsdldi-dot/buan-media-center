@@ -175,8 +175,8 @@ section.block.soft{background:var(--soft)}
 .ev.s-마감{background:#eceef1;color:#59616d}
 .ev.s-진행중{background:#dff1f3;color:#005c66}
 .cal-list{display:flex;flex-direction:column;gap:12px}
-.cal-item{display:grid;grid-template-columns:110px 1fr auto;gap:18px;align-items:center;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;text-align:left;width:100%}
-.cal-item .d{font-weight:800;font-variant-numeric:tabular-nums;color:var(--t-orange)}
+.cal-item{display:grid;grid-template-columns:160px 1fr auto;gap:18px;align-items:center;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;text-align:left;width:100%}
+.cal-item .d{white-space:nowrap;font-weight:800;font-variant-numeric:tabular-nums;color:var(--t-orange)}
 .cal-item .d small{display:block;color:var(--muted);font-weight:600}
 .legend{display:flex;gap:14px;font-size:.82rem;color:var(--muted);margin-top:14px;flex-wrap:wrap}
 .empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
@@ -355,6 +355,8 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 .film-card .prog{display:inline-block;margin-top:8px;font-size:.78rem;font-weight:700;color:#0f1724;background:#9cc8f0;border-radius:999px;padding:3px 10px}
 .film-card p{color:#a9b4c3;margin:8px 0 0;font-size:.92rem}
 @media (max-width:760px){.film-grid{grid-template-columns:1fr}}
+.call-note{display:flex;gap:8px;align-items:flex-start;background:#fff4e2;border:1px solid #f3dcb3;color:#7a4a08;border-radius:12px;padding:12px 14px;font-size:.9rem;margin:14px 0 0}
+.call-note::before{content:"☎";font-weight:800}
 .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media (max-width:760px){.rules-grid{grid-template-columns:1fr}}
 </style>
@@ -406,7 +408,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
   <section class="block soft" data-c="orange">
     <div class="wrap">
       <div class="sec-head rv">
-        <div><div class="eyebrow">교육</div><h2 class="sec-title">이번 달 수업</h2><p class="sec-lead">지금 모집하거나 진행 중인 수업이에요. 눌러서 일정과 교육비를 확인하세요.</p></div>
+        <div><div class="eyebrow">교육</div><h2 class="sec-title">이번 달 수업</h2><p class="sec-lead">접수 중이거나 진행 중인 수업이에요. 정원이 찼을 수 있으니 신청 전에 센터로 전화해 확인해 주세요.</p></div>
         <a class="more" href="#edu">수업 달력 전체 보기</a>
       </div>
       <div class="class-row" id="homeClasses"></div>
@@ -519,12 +521,13 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
           <button class="icon-btn" id="calNext" aria-label="다음 달">›</button>
         </div>
         <div class="seg" role="group" aria-label="보기 방식">
-          <button id="viewCal" aria-pressed="true">달력</button>
-          <button id="viewList" aria-pressed="false">목록</button>
+          <button id="viewList" aria-pressed="true">목록</button>
+          <button id="viewCal" aria-pressed="false">달력</button>
         </div>
       </div>
       <div id="calArea"></div>
-      <div class="legend"><span class="st st-모집중">모집중</span><span class="st st-진행중">진행중</span><span class="st st-마감">마감</span></div>
+      <div class="legend"><span class="st st-모집중">접수 중</span><span class="st st-진행중">교육 중</span><span class="st st-마감">교육 종료</span></div>
+      <p class="call-note">모집 정원이 다 찼을 수 있어요. 신청 전에 센터로 꼭 전화해서 확인해 주세요. <b class="js-phone"></b></p>
     </div>
   </section>
   <section class="block soft" id="edu-apply">
@@ -546,7 +549,8 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
           <p class="apply-meta"><b class="js-hours"></b><br>문의 <b class="js-phone"></b></p>
         </div>
       </div>
-      <p class="fee-note" style="margin-top:18px">예) 정원 12명인 수업은 온라인 6명, 방문 6명을 받아요. 교재비와 재료비는 본인 부담이에요. 감면 대상자는 증빙서류를 함께 내면 수강료를 감면받을 수 있어요(<a href="#rent-discount">감면 기준 보기</a>).</p>
+      <p class="call-note" style="margin-top:18px">모집 정원이 다 찼을 수 있어요. 신청하기 전에 센터(<b class="js-phone"></b>)로 꼭 전화해서 확인해 주세요.</p>
+      <p class="fee-note" style="margin-top:10px">예) 정원 12명인 수업은 온라인 6명, 방문 6명을 받아요. 교재비와 재료비는 본인 부담이에요. 감면 대상자는 증빙서류를 함께 내면 수강료를 감면받을 수 있어요(<a href="#rent-discount">감면 기준 보기</a>).</p>
     </div>
   </section>
 </div>
@@ -694,6 +698,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
     <span class="st" id="mStatus"></span>
     <h3 id="mTitle"></h3>
     <dl id="mInfo"></dl>
+    <p class="call-note" id="mNote" style="margin:-8px 0 18px">모집 정원이 다 찼을 수 있어요. 신청 전에 센터로 꼭 전화해서 확인해 주세요.</p>
     <a class="btn color" id="mApply" href="#edu-apply" style="--mcb:var(--c-orange);width:100%">신청 방법 보기</a>
   </div>
 </div>
@@ -738,11 +743,11 @@ function imgOr(src, label, sub){
 }
 
 /* ---------- 수업: 기간·요일 → 날짜별 회차 ---------- */
+// 교육 시작 전날까지 '접수 중', 교육 기간에는 '교육 중', 끝나면 '교육 종료' (날짜만 넣으면 자동)
 function status(c){
-  if(c.applyStart && c.applyEnd && TODAY_S >= c.applyStart && TODAY_S <= c.applyEnd) return "모집중";
-  if(TODAY_S >= c.start && TODAY_S <= c.end) return "진행중";
-  if(TODAY_S < (c.applyStart || c.start)) return "모집예정";
-  return "마감";
+  if(TODAY_S < c.start) return "접수 중";
+  if(TODAY_S <= (c.end || c.start)) return "교육 중";
+  return "교육 종료";
 }
 function sessions(){
   const out = [];
@@ -757,7 +762,7 @@ function sessions(){
   });
   return out;
 }
-const stClass = s => s==="모집예정" ? "모집중" : s;
+const stClass = s => ({"접수 중":"모집중","교육 중":"진행중","교육 종료":"마감"})[s] || "마감";
 
 /* ---------- 카드 ---------- */
 function mallCard(m){
@@ -820,7 +825,7 @@ function chips(el, cats, onPick){
 
 /* ---------- 달력 ---------- */
 let calMonth = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
-let calView = innerWidth < 760 ? "list" : "cal";
+let calView = "list";
 function renderCal(){
   const y = calMonth.getFullYear(), m = calMonth.getMonth();
   $("#calTitle").textContent = `${y}년 ${m+1}월`;
@@ -830,11 +835,15 @@ function renderCal(){
   const items = sessions().filter(s => s.date.startsWith(key)).sort((a,b)=>(a.date+a.c.time).localeCompare(b.date+b.c.time));
   const area = $("#calArea");
   if(calView === "list"){
-    area.innerHTML = items.length ? `<div class="cal-list">${items.map(s=>`
-      <button class="cal-item" data-cls="${s.c._i}">
-        <span class="d">${fmtDate(s.date)}<small>${esc(s.c.time)}</small></span>
-        <span><b>${esc(s.c.title)}</b><br><span style="color:var(--muted);font-size:.88rem">${short(s.c.start)}~${short(s.c.end)} · ${esc(s.c.fee||"")}</span></span>
-        <span class="st st-${stClass(s.c._st)}">${esc(s.c._st)}</span>
+    const mStart = `${key}-01`, mEnd = `${key}-${String(new Date(y, m+1, 0).getDate()).padStart(2,"0")}`;
+    const order = {"접수 중":0,"교육 중":1,"교육 종료":2};
+    const courses = DATA.classes.filter(c => c.start <= mEnd && (c.end||c.start) >= mStart)
+      .sort((a,b) => order[a._st]-order[b._st] || a.start.localeCompare(b.start));
+    area.innerHTML = courses.length ? `<div class="cal-list">${courses.map(c=>`
+      <button class="cal-item" data-cls="${c._i}">
+        <span class="d">${short(c.start)} ~ ${short(c.end)}<small>매주 ${esc(c.days)}</small></span>
+        <span><b>${esc(c.title)}</b><br><span style="color:var(--muted);font-size:.88rem">${esc(c.time)}${c.count?` · ${esc(c.count)}`:""}${c.fee?` · ${esc(c.fee)}`:""}${c.cap?` · 정원 ${esc(c.cap)}`:""}</span></span>
+        <span class="st st-${stClass(c._st)}">${esc(c._st)}</span>
       </button>`).join("")}</div>` : `<div class="empty">이 달에는 등록된 수업이 없어요.</div>`;
     return;
   }
@@ -858,13 +867,14 @@ function openClass(i){
   lastFocus = document.activeElement;
   $("#mStatus").className = `st st-${stClass(c._st)}`; $("#mStatus").textContent = c._st;
   $("#mTitle").textContent = c.title;
-  $("#mInfo").innerHTML = [["기간",`${fmtDate(c.start)} ~ ${fmtDate(c.end)}`],["시간",`매주 ${c.days} ${c.time}`],["횟수",c.count],["교육비",c.fee],["정원",c.cap],["접수",c.applyStart?`${short(c.applyStart)} ~ ${short(c.applyEnd)}`:""],["문의",SETTINGS.phone]]
+  $("#mInfo").innerHTML = [["기간",`${fmtDate(c.start)} ~ ${fmtDate(c.end)}`],["시간",`매주 ${c.days} ${c.time}`],["횟수",c.count],["교육비",c.fee],["정원",c.cap],["문의",SETTINGS.phone]]
     .filter(r=>r[1]).map(r=>`<dt>${r[0]}</dt><dd>${esc(r[1])}</dd>`).join("");
   const a = $("#mApply");
-  const can = c._st === "모집중" || c._st === "모집예정";
+  const can = c._st === "접수 중";
   const online = !!SETTINGS.eduOnlineOpen && !!(c.link || SETTINGS.eduApply);
   if(online){ a.href = c.link || SETTINGS.eduApply; a.target = "_blank"; a.textContent = can ? "온라인으로 신청하기" : "자세히 보기"; a.onclick = null; }
   else { a.href = "#edu-apply"; a.removeAttribute("target"); a.textContent = "신청 방법 보기"; a.onclick = () => closeModal(); }
+  $("#mNote").hidden = c._st !== "접수 중";
   $("#classModal").classList.add("show"); $("#mClose").focus();
 }
 function closeModal(){ $("#classModal").classList.remove("show"); lastFocus && lastFocus.focus(); }
@@ -909,8 +919,8 @@ function renderAll(){
   sessions();
   const mall = DATA.mall.filter(m=>m.show!==false);
   const vids = DATA.videos.filter(v=>v.show!==false);
-  const order = {"모집중":0,"모집예정":1,"진행중":2,"마감":3};
-  const homeCls = DATA.classes.filter(c=>c._st!=="마감").sort((a,b)=>order[a._st]-order[b._st] || a.start.localeCompare(b.start));
+  const order = {"접수 중":0,"교육 중":1,"교육 종료":2};
+  const homeCls = DATA.classes.filter(c=>c._st!=="교육 종료").sort((a,b)=>order[a._st]-order[b._st] || a.start.localeCompare(b.start));
 
   if(SETTINGS.logo) $$("#logoTop,#logoHero").forEach(i=>i.src=fixImg(SETTINGS.logo));
   if(SETTINGS.logoDark) $("#logoFoot").src = fixImg(SETTINGS.logoDark);

@@ -211,7 +211,7 @@ const SECTIONS = {
       {k:"link",label:"첨부·관련 링크(선택)",type:"url"},
       {k:"body",label:"내용",type:"textarea",full:true}
     ], view:x=>({t:x.title, s:x.date, tags:x.pin?['<span class="tag pin">중요</span>']:[]}) },
-  classes: { title:"미디어 교육 일정", desc:"기간과 요일만 넣으면 수업 달력에 날짜별로 표시돼요. 모집 상태는 접수 기간으로 자동 계산돼요.", add:"수업 추가",
+  classes: { title:"미디어 교육 일정", desc:"기간과 요일만 넣으면 수업 달력에 날짜별로 표시돼요. 교육 시작 전날까지 '접수 중', 교육 기간엔 '교육 중', 끝나면 '교육 종료'로 자동으로 바뀌어요.", add:"수업 추가",
     fields:[
       {k:"title",label:"수업 이름",type:"text",req:true,full:true},
       {k:"start",label:"교육 시작일",type:"date",req:true},
@@ -221,8 +221,6 @@ const SECTIONS = {
       {k:"count",label:"횟수",type:"text",hint:"예: 6회"},
       {k:"fee",label:"교육비",type:"text",hint:"예: 20,000원 / 무료"},
       {k:"cap",label:"정원",type:"text",hint:"예: 12명"},
-      {k:"applyStart",label:"접수 시작일",type:"date"},
-      {k:"applyEnd",label:"접수 마감일",type:"date"},
       {k:"link",label:"신청 링크(선택)",type:"url",full:true,hint:"비워두면 기본 설정의 '교육 신청 링크'로 연결돼요"}
     ], view:x=>({t:x.title, s:`${x.start||""} ~ ${x.end||""} · ${x.days||""} ${x.time||""}`}) },
   facilities: { title:"대관 가능 시설", desc:"시설·장비 빌리기 화면의 시설 목록이에요.", add:"시설 추가",
