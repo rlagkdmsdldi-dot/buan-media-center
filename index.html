@@ -12,7 +12,7 @@
 /* 레이아웃: 흰 바탕 + 가운데 로고 헤더, 한 화면에 한 메시지씩 쌓이는 스크롤형 메인, 메뉴별로 로고 색 하나를 포인트로 사용 */
 :root{
   --bg:#ffffff;
-  --soft:#f5f5f7;
+  --soft:#f7f5f0;
   --ink:#13233a;
   --muted:#5d6776;
   --line:#e4e6eb;
@@ -103,7 +103,7 @@ section.block.soft{background:var(--soft)}
 .hero .wrap{padding-bottom:56px}
 .hero-logo{width:min(560px,82vw);margin:0 auto;transform:scale(calc(1 - var(--p,0)*.18));opacity:calc(1 - var(--p,0)*.6);transition:transform .05s linear}
 .hero h1{font-size:clamp(2rem,5.4vw,3.8rem);font-weight:800;margin-top:44px}
-.hero h1 .grad{background:linear-gradient(90deg,var(--c-orange),var(--c-pink) 35%,var(--c-purple) 65%,var(--c-teal));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 .grad{color:#d9741a}
 .hero p{color:var(--muted);font-size:1.1rem;margin:18px auto 0;max-width:30em}
 .hero-cta{display:flex;gap:12px;justify-content:center;margin-top:34px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 26px;font-weight:700;text-decoration:none;cursor:pointer;font-size:1rem;min-height:52px}
@@ -245,11 +245,16 @@ section.block.soft{background:var(--soft)}
 
 /* 바로가기 */
 .quick{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.quick a{display:flex;flex-direction:column;gap:10px;text-decoration:none;padding:32px;border-radius:28px;color:#fff;min-height:200px;justify-content:flex-end;transition:transform .25s;box-shadow:0 6px 0 rgba(27,36,51,.18)}
+.quick a{display:flex;flex-direction:column;gap:8px;text-decoration:none;padding:30px 32px;border-radius:28px;color:var(--ink);min-height:180px;justify-content:flex-end;transition:transform .25s,box-shadow .25s;background:#fff;border:1px solid var(--line);box-shadow:0 2px 10px rgba(20,30,60,.04);position:relative}
+.quick a::after{content:"→";position:absolute;top:26px;right:28px;font-size:1.3rem;font-weight:700}
+.quick a:hover{box-shadow:0 12px 28px rgba(20,30,60,.08)}
 .quick a:hover{transform:translateY(-4px)}
 .quick a b{font-size:1.5rem}
-.quick a span{opacity:.9}
-.q1{background:var(--c-orange)}.q2{background:var(--c-teal)}.q3{background:var(--c-purple)}
+.quick a span{opacity:1}
+.quick a span{color:var(--muted)}
+.q1{background:#fdf1e4!important;border-color:#f6dcc0!important}.q1 b,.q1::after{color:var(--t-orange)}
+.q2{background:#e6f4f5!important;border-color:#c6e4e7!important}.q2 b,.q2::after{color:var(--t-teal)}
+.q3{background:#f1ecf7!important;border-color:#ddd2ea!important}.q3 b,.q3::after{color:var(--t-purple)}
 
 /* 소개 */
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -413,7 +418,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 .scroll-cam .tip{position:absolute;right:110%;top:50%;transform:translateY(-50%);background:#1b2433;color:#fff;font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none}
 .scroll-cam:hover .tip,.scroll-cam:focus-visible .tip{opacity:1}
 .scroll-cam.top{opacity:.55}
-@media (max-width:760px){.film-track{right:4px;width:8px;top:90px}.scroll-cam{width:26px;height:23px;right:-4px}}
+@media (max-width:760px){.film-track{display:none}.scroll-cam{width:30px;height:27px;right:6px}}
 </style>
 </head>
 <body>
@@ -452,7 +457,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
     <canvas class="fx-sky" id="fxSky" aria-hidden="true"></canvas>
     <div class="wrap">
       <img class="hero-logo" id="logoHero" src="logo.png" alt="부안미디어센터">
-      <h1 id="heroTitle">배우고, 찍고, 나누는<br><span class="grad">부안의 미디어 놀이터</span></h1>
+      <h1 id="heroTitle">배우고, 만들고, 나누는<br><span class="grad">부안의 미디어 놀이터</span></h1>
       <p id="heroSub">스마트폰 촬영부터 라이브커머스까지, 군민 누구나 배울 수 있어요. 스튜디오와 장비를 빌려 직접 만들어 볼 수도 있어요.</p>
       <div class="hero-cta">
         <a class="btn primary" href="#edu">이번 달 수업 보기</a>
@@ -1000,6 +1005,7 @@ function renderAll(){
   const hl = $("#logoHero"), fitHero = () => { if(hl.naturalWidth) hl.style.maxWidth = Math.max(240, Math.round(hl.naturalWidth * 1.5)) + "px"; };
   hl.complete ? fitHero() : hl.addEventListener("load", fitHero, {once:true});
   if(SETTINGS.logoDark) $("#logoFoot").src = fixImg(SETTINGS.logoDark);
+  if(SETTINGS.heroTitle === "배우고, 찍고, 나누는|부안의 미디어 놀이터") SETTINGS.heroTitle = "배우고, 만들고, 나누는|부안의 미디어 놀이터";
   const [t1,t2] = SETTINGS.heroTitle.split("|");
   $("#heroTitle").innerHTML = `${esc(t1)}${t2?`<br><span class="grad">${esc(t2)}</span>`:""}`;
   $("#heroSub").textContent = SETTINGS.heroSub;
