@@ -225,6 +225,14 @@ section.block.soft{background:var(--soft)}
 
 /* 공지 */
 .notice-list{border-top:2px solid var(--ink)}
+.press-list{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.press{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;transition:transform .2s,box-shadow .2s}
+.press:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(20,30,60,.08)}
+.press .meta{font-size:.82rem;color:var(--muted);font-weight:600}
+.press .meta b{color:var(--c-purple,#8060A0);margin-right:8px}
+.press .tt{font-weight:700;font-size:1.02rem;margin:6px 0 4px;line-height:1.45}
+.press .sm{font-size:.9rem;color:var(--muted);line-height:1.5}
+@media (max-width:760px){.press-list{grid-template-columns:1fr}}
 .notice{border-bottom:1px solid var(--line)}
 .notice button{width:100%;display:grid;grid-template-columns:70px 1fr 120px;gap:12px;align-items:center;padding:20px 8px;background:none;border:0;text-align:left;cursor:pointer}
 .notice .no{color:var(--muted);font-variant-numeric:tabular-nums;text-align:center}
@@ -701,6 +709,15 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
   <section class="block">
     <div class="wrap"><div class="notice-list" id="noticeAll"></div></div>
   </section>
+  <section class="block" id="news-press" style="padding-top:0">
+    <div class="wrap">
+      <div class="eyebrow">언론 보도</div>
+      <h2 class="sec-title" style="margin-bottom:8px">신문에 나온 부안미디어센터</h2>
+      <p class="sec-lead" style="margin:0 0 24px">부안미디어센터를 다룬 기사를 모았어요. 누르면 기사 원문으로 이동해요.</p>
+      <div class="press-list" id="pressList"></div>
+      <button class="btn ghost" id="pressMore" type="button" hidden style="margin-top:18px">기사 더 보기</button>
+    </div>
+  </section>
   <section class="block soft" id="news-ask">
     <div class="wrap">
       <div class="eyebrow">문의하기</div>
@@ -743,6 +760,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 
 <script src="config.js"></script>
 <script src="defaults.js"></script>
+<script src="news.js"></script>
 <script src="pixel-pals.js"></script>
 
 <div class="modal" id="classModal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
@@ -1097,6 +1115,13 @@ function renderAll(){
   chips($("#videoChips"), uniq(vids.map(v=>v.cat)), drawVid); drawVid("전체");
   // 공지
   $("#noticeAll").innerHTML = noticeItems(DATA.notices);
+  // 언론 보도
+  const press = [...(window.BMC_NEWS||[])].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const pressCard = n => `<a class="press" href="${esc(n.url)}" target="_blank" rel="noopener"><div class="meta"><b>${esc(n.press)}</b>${esc(String(n.date).slice(0,7).replace("-","."))}</div><div class="tt">${esc(n.title)} ↗</div>${n.summary?`<div class="sm">${esc(n.summary)}</div>`:""}</a>`;
+  let pressN = 6;
+  const drawPress = () => { $("#pressList").innerHTML = press.slice(0,pressN).map(pressCard).join(""); $("#pressMore").hidden = press.length <= pressN; };
+  $("#pressMore").onclick = () => { pressN += 6; drawPress(); };
+  $("#news-press").hidden = !press.length; drawPress();
   // 푸터
   $("#footInfo").innerHTML = `<dt>주소</dt><dd>${esc(SETTINGS.address)}</dd><dt>전화</dt><dd>${esc(SETTINGS.phone)}</dd><dt>이메일</dt><dd>${esc(SETTINGS.email)}</dd><dt>운영시간</dt><dd>${esc(SETTINGS.hours)} · ${esc(SETTINGS.closed)}</dd><dt>운영</dt><dd>${esc(SETTINGS.operator)}</dd>`;
 
