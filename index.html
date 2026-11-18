@@ -1011,6 +1011,8 @@ function renderAll(){
   $$(".js-phone").forEach(e=>e.textContent = SETTINGS.phone);
   if(SETTINGS.mallName) $$(".js-mall-name").forEach(e=>e.textContent = SETTINGS.mallName);
   
+  // 공유누리: 기관 지정이 없는 주소면 부안군 문화체육시설사업소(4791051) 장비만 보이게
+  if(/eshare\.go\.kr/.test(SETTINGS.rentEquip||"") && !/instt_code=/.test(SETTINGS.rentEquip)) SETTINGS.rentEquip += (SETTINGS.rentEquip.includes("?") ? "&" : "?") + "instt_code=4791051";
   setHref("#rentFacBtn", SETTINGS.rentFacility); setHref("#rentEqBtn", SETTINGS.rentEquip);
   $$(".js-email").forEach(e=>e.textContent = SETTINGS.email);
   setHref("#ytBtn,#footYt", SETTINGS.youtube); setHref("#footIg", SETTINGS.instagram); setHref(".js-map", SETTINGS.mapLink);

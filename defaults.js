@@ -21,7 +21,7 @@ window.BMC_DEFAULTS = {
   logoDark: "",
   eduApply: "https://www.buan.go.kr/reserve/board/list.buan?boardId=BBS_0000237&menuCd=DOM_000002001007000000&contentsSid=2754&cpath=%2Freserve",
   rentFacility: "https://www.buan.go.kr/reserve/index.buan?menuCd=DOM_000002002009000000",
-  rentEquip: "https://www.eshare.go.kr/UserPortal/adv/resources/AdvEsSearchResourcesMainView.do?rsrcClsCd=020000",
+  rentEquip: "https://www.eshare.go.kr/UserPortal/adv/resources/AdvEsSearchResourcesMainView.do?rsrcClsCd=020000&instt_code=4791051",
   equipForm: "https://drive.google.com/drive/folders/1SaK7ROBvUA8K0Hvu1gynfP4NRbHaT_oI?usp=drive_link",
   equipGuide: "https://www.youtube.com/watch?v=mSrMN67b7yg",
   facGuide: "https://www.youtube.com/watch?v=nCFDz6EDFBQ",
