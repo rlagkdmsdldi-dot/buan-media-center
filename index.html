@@ -431,7 +431,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
   <div class="wrap">
     <div class="head-top">
       <button class="menu-btn" id="menuBtn" aria-label="메뉴 열기" aria-expanded="false" aria-controls="gnb"><span></span><span></span><span></span></button>
-      <a class="logo-link" href="#home" aria-label="부안미디어센터 처음으로"><img id="logoTop" src="logo.png" alt="부안미디어센터"></a>
+      <a class="logo-link" href="#home" aria-label="부안미디어센터 처음으로"><img id="logoTop" src="logo.png" srcset="logo.png 1x, logo@2x.png 2x, logo@3x.png 3x" alt="부안미디어센터"></a>
       <div class="head-tools">
         <button class="btn-text" id="bigText" aria-pressed="false">글자 크게</button>
       </div>
@@ -456,7 +456,7 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
   <section class="hero" id="hero" data-time="day">
     <canvas class="fx-sky" id="fxSky" aria-hidden="true"></canvas>
     <div class="wrap">
-      <img class="hero-logo" id="logoHero" src="logo.png" alt="부안미디어센터">
+      <img class="hero-logo" id="logoHero" src="logo.png" srcset="logo.png 1x, logo@2x.png 2x, logo@3x.png 3x" alt="부안미디어센터">
       <h1 id="heroTitle">배우고, 만들고, 나누는<br><span class="grad">부안의 미디어 놀이터</span></h1>
       <p id="heroSub">스마트폰 촬영부터 라이브커머스까지, 군민 누구나 배울 수 있어요. 스튜디오와 장비를 빌려 직접 만들어 볼 수도 있어요.</p>
       <div class="hero-cta">
@@ -1000,7 +1000,7 @@ function renderAll(){
 
   // 예전에 올렸던 흐린 로고(1i5Lyjvr…)는 쓰지 않고 새 로고(logo.png)를 보여줘요
   const LOGO_OLD = /1i5Lyjvrur7qFGm8xba-cHmz96KtJ9oeI/;
-  if(SETTINGS.logo && !LOGO_OLD.test(SETTINGS.logo)) $$("#logoTop,#logoHero").forEach(i=>i.src=fixImg(SETTINGS.logo));
+  if(SETTINGS.logo && !LOGO_OLD.test(SETTINGS.logo)) $$("#logoTop,#logoHero").forEach(i=>{ i.removeAttribute("srcset"); i.src=fixImg(SETTINGS.logo); });
   const hl = $("#logoHero"), fitHero = () => { if(hl.naturalWidth) hl.style.maxWidth = Math.max(240, Math.round(hl.naturalWidth * 1.5)) + "px"; };
   hl.complete ? fitHero() : hl.addEventListener("load", fitHero, {once:true});
   if(SETTINGS.logoDark) $("#logoFoot").src = fixImg(SETTINGS.logoDark);
