@@ -1016,7 +1016,7 @@ function renderAll(){
   const forms = DATA.forms || [];
   $("#rent-forms").hidden = !forms.length;
   $("#formsBox").innerHTML = forms.map(f => `<a class="form-file" href="${esc(f.url)}" download target="_blank" rel="noopener">
-      <span class="ext">${esc((String(f.url).match(/\.(\w+)(?:\?|$)/)||[,"FILE"])[1].toUpperCase())}</span>
+      <span class="ext">${esc(((String(f.fileName||"").match(/\.(\w+)$/)||String(f.url).match(/\.(hwpx?|pdf|docx?|xlsx?|pptx?|zip)(?:\?|$)/i)||[,"파일"])[1]).toUpperCase())}</span>
       <span><b>${esc(f.title)}</b><small>${esc(f.desc||"")}</small></span><span class="dl" aria-hidden="true">↓</span></a>`).join("");
 
   // 군민 제작 영화
