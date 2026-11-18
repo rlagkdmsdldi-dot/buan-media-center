@@ -111,13 +111,13 @@ window.BMC_DEFAULTS = {
     discountNote: "감면을 받으려면 신청서와 함께 증빙서류를 내야 해요(내지 않으면 인정되지 않아요). 「부안군 미디어센터 설치 및 운영 조례」 제8조 기준이에요."
   },
   forms: [
-    {title:"시설 사용(감면) 신청서",desc:"별지 제1호서식",url:"forms/form1-facility.hwpx"},
-    {title:"장비 사용(감면) 신청서",desc:"별지 제2호서식",url:"forms/form2-equipment.hwpx"},
-    {title:"교육 수강(감면) 신청서",desc:"별지 제3호서식",url:"forms/form3-education.hwpx"},
-    {title:"미성년자 보호자 동의서",desc:"별지 제4호서식 · 19세 미만",url:"forms/form4-guardian.hwp"},
-    {title:"시설 사용자 준수사항",desc:"대관 시 서명",url:"forms/rules-facility.hwpx"},
-    {title:"장비 사용자 준수사항",desc:"대여 시 서명",url:"forms/rules-equipment.hwpx"},
-    {title:"사용료 및 교육 수강료 기준표",desc:"조례 별표",url:"forms/fee-table.hwp"}
+    {title:"시설 사용(감면) 신청서",cat:"시설",desc:"별지 제1호서식",url:"forms/form1-facility.hwpx"},
+    {title:"장비 사용(감면) 신청서",cat:"장비",desc:"별지 제2호서식",url:"forms/form2-equipment.hwpx"},
+    {title:"교육 수강(감면) 신청서",cat:"교육",desc:"별지 제3호서식",url:"forms/form3-education.hwpx"},
+    {title:"미성년자 보호자 동의서",cat:"공통",desc:"별지 제4호서식 · 19세 미만",url:"forms/form4-guardian.hwp"},
+    {title:"시설 사용자 준수사항",cat:"시설",desc:"대관 시 서명",url:"forms/rules-facility.hwpx"},
+    {title:"장비 사용자 준수사항",cat:"장비",desc:"대여 시 서명",url:"forms/rules-equipment.hwpx"},
+    {title:"사용료 및 교육 수강료 기준표",cat:"기타",desc:"조례 별표",url:"forms/fee-table.hwp"}
   ],
   equipment: []
 }

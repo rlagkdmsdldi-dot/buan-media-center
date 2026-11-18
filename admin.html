@@ -89,11 +89,11 @@ main{padding:32px clamp(18px,4vw,48px) 80px;max-width:1100px;width:100%}
 .stats-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
 
 /* 모달 */
-.modal{position:fixed;inset:0;background:rgba(10,20,35,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto;z-index:50}
+.modal{position:fixed;inset:0;background:rgba(10,20,35,.5);display:none;align-items:center;justify-content:center;padding:24px 16px;z-index:50}
 .modal.show{display:flex}
-.modal-box{background:#fff;border-radius:22px;padding:28px;width:min(760px,100%)}
+.modal-box{background:#fff;border-radius:22px;padding:28px 28px 0;width:min(760px,100%);max-height:calc(100vh - 48px);overflow:auto}
 .modal-box h3{font-size:1.3rem;margin-bottom:18px}
-.modal-foot{display:flex;justify-content:space-between;gap:10px;margin-top:22px;flex-wrap:wrap}
+.modal-foot{display:flex;justify-content:space-between;gap:10px;margin-top:22px;flex-wrap:wrap;position:sticky;bottom:0;background:#fff;padding:14px 0 20px;border-top:1px solid var(--line);z-index:2}
 
 /* 문의 */
 .inq{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px}
@@ -234,9 +234,10 @@ const SECTIONS = {
     fields:[
       {k:"title",label:"양식 이름",type:"text",req:true},
       {k:"desc",label:"설명",type:"text",hint:"예: 별지 제1호서식"},
+      {k:"cat",label:"어느 신청에 쓰는 양식인가요?",type:"select",options:["시설","장비","교육","공통","기타"],hint:"시설·장비·교육: 해당 신청 칸에 '원클릭 받기' 버튼으로 나와요 / 공통: 세 곳 모두 / 기타: 맨 아래 목록에만"},
       {k:"fileName",type:"hidden"},
       {k:"url",label:"파일",type:"file",req:true,full:true,hint:"컴퓨터에 있는 한글·PDF·워드·엑셀 파일을 바로 올리거나, 파일 링크를 붙여넣어요 (10MB 이하)"}
-    ], view:x=>({t:x.title, s:x.desc}) },
+    ], view:x=>({t:x.title, s:[x.cat||"분류 없음", x.desc].filter(Boolean).join(" · ")}) },
   equipment: { title:"대여 가능 장비", desc:"시설·장비 빌리기 화면의 장비 목록이에요.", add:"장비 추가",
     fields:[
       {k:"name",label:"장비 이름",type:"text",req:true},
