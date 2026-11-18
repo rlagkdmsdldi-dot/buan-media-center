@@ -15,13 +15,18 @@
     { name:"순자 할머니",   hair:"#c9c9c9", style:"bun",   shirt:"#8060A0", item:"phone", skirt:"#5b4478" }, // 4 할머니
     { name:"만수 할아버지", hair:"#d8d8d8", style:"short", shirt:"#004070", item:"cane", glasses:1 },    // 5 할아버지
     { name:"콩이",          hair:"#3a2a20", style:"long",  shirt:"#f2b705", item:"none", kid:1, skirt:"#e0708a" }, // 6 어린이
-    { name:"하루",          hair:"#1f1a17", style:"cap",   shirt:"#3d7bd9", item:"phone", cap:"#1b2433" } // 7 학생
+    { name:"하루",          hair:"#1f1a17", style:"cap",   shirt:"#3d7bd9", item:"phone", cap:"#1b2433" }, // 7 학생
+    { name:"영희 이모",     hair:"#7a4a2a", style:"long",  shirt:"#9ccc65", item:"bag", skirt:"#3f6f8f" },     // 8 동네 이모
+    { name:"준호",          hair:"#2b2b2b", style:"cap",   shirt:"#e2543b", item:"none", kid:1, cap:"#e2543b" }, // 9 초등학생
+    { name:"민지",          hair:"#1f1a17", style:"long",  shirt:"#7fc4e8", item:"laptop" },                 // 10 대학생
+    { name:"김 반장님",     hair:"#4a4a4a", style:"bald",  shirt:"#8d6e63", item:"phone" }                   // 11 마을 반장님
   ];
   // 혼잣말 (가끔)
   const SOLO = {
     0:[["수업 보러 갈래요?","#edu"]], 1:[["유튜브 보러 가요","#video"]], 2:[["우리가 만든 영화!","#film"]],
     3:[["우리 가게 놀러 와요","#mall"]], 4:[["스마트폰 배우러 왔어요","#edu"]], 5:[["허허, 날씨 좋구먼","#home"]],
-    6:[["드론이다!","#video"]], 7:[["스튜디오 빌리고 싶다","#rent"]]
+    6:[["드론이다!","#video"]], 7:[["스튜디오 빌리고 싶다","#rent"]], 8:[["장 보고 수업 가야지","#edu"]],
+    9:[["나도 유튜버 할래!","#video"]], 10:[["과제 영상 찍어야 해","#rent"]], 11:[["우리 마을 영화도 찍자!","#film"]]
   };
   // 대화: [말하는 사람, 대답하는 사람, 첫마디, 대답, 누르면 갈 곳]
   const TALKS = [
@@ -33,9 +38,25 @@
     [7,0,"카메라 빌릴 수 있어요?","정회원이면 돼요!","#rent"],
     [1,7,"유튜브 구독했어요?","알림 설정까지 했죠!","#video"],
     [0,3,"가게 영상 언제 찍어요?","스튜디오 예약했어요!","#rent"],
-    [3,7,"우리 가게 블로그 봤어?","네, 사진 예뻐요!","#mall"]
+    [3,7,"우리 가게 블로그 봤어?","네, 사진 예뻐요!","#mall"],
+    [8,9,"준호야, 수업 늦겠다!","유튜브 교실 재밌어요!","#edu"],
+    [9,6,"콩이야, 드론 봤어?","응! 나도 찍어보고 싶어","#video"],
+    [8,4,"어머님, 스마트폰 배우세요?","응, 손주한테 영상 보내려고","#edu"],
+    [10,0,"노트북 빌릴 수 있어요?","정회원이면 가능해요!","#rent"],
+    [10,1,"아나운서 되려면 어떻게 해요?","스피치 수업부터 들어봐요!","#edu"],
+    [11,3,"우리 가게도 라이브 해볼까?","센터에서 배우면 돼요!","#mall"],
+    [11,7,"요즘 학생들은 영상 잘 찍더라","반장님도 배우실 수 있어요!","#edu"]
   ];
-  const GROUNDS = { 0:{wide:[4,5,6,2], small:[4,5]}, 1:{wide:[3,1,7,0], small:[3,1]} };
+  // 마을 길마다 이 중에서 매번 다르게 골라서 나와요
+  const POOLS = { 0:[4,5,6,2,8,9], 1:[3,1,7,0,10,11] };
+  function pickCast(pool, n){
+    const pairs = TALKS.filter(t => pool.includes(t[0]) && pool.includes(t[1]));
+    const cast = [];
+    if(pairs.length){ const t = pairs[Math.floor(Math.random()*pairs.length)]; cast.push(t[0], t[1]); }
+    const rest = pool.filter(i => !cast.includes(i)).sort(() => Math.random() - .5);
+    while(cast.length < n && rest.length) cast.push(rest.shift());
+    return cast.slice(0, n);
+  }
 
   // ---------- 픽셀 그림 ----------
   const COL = {k:"#1b2433", s:"#f2c9a0", e:"#1b2433", m:"#e0708a", p:"#2c3e66", d:"#3b4352", w:"#ffffff", g:"#9aa3b0", r:"#e23b3b", B:"#8a5a3c",
@@ -54,6 +75,8 @@
     clapper:{top:8, rows:["kwkwk","kkkkk","kdddk","kdddk","kkkkk"]},
     phone:  {top:8, rows:["kkkk.","krrk.","kwwk.","kwwk.","kkkk."]},
     cane:   {top:8, rows:["BBB..","..B..","..B..","..B..","..B..","..B..","..B..","..B.."]},
+    bag:    {top:9, rows:[".kk..","k..k.","kBBk.","kLLk.","kkkk."]},
+    laptop: {top:9, rows:["kkkkk","kgggk","kgwgk","kkkkk"]},
     none:   {top:8, rows:[]}
   };
   function palFrame(p, f){
@@ -66,7 +89,8 @@
     if(p.style === "long"){ set(rows,4,1,"h"); set(rows,4,10,"h"); set(rows,5,1,"h"); set(rows,5,10,"h"); set(rows,6,1,"kh"); set(rows,6,9,"hk"); }
     if(p.style === "bun"){ rows[0] = "....khhk...."; rows[1] = "..kkhhhhkk.."; }
     if(p.style === "cap"){ rows[0] = "...kkkkkk..."; rows[1] = "..kqqqqqqk.."; rows[2] = ".kqqqqqqqqkk"; rows[3] = ".khsssssshk."; }
-    if(p.glasses){ rows[4] = ".kskekkeksk."; }
+    if(p.style === "bald"){ rows[1] = "..kssssssk.."; rows[2] = ".khsssssshk."; }
+    if(p.glasses){ rows[4] = ".ksgeggegsk."; }
     let legs = [["..kpppkpppk.","..kppk.kppk.","..kkkk.kkkk."],["..kpppkpppk.",".kppk...kppk",".kkkk...kkkk"]];
     if(p.skirt){ rows[rows.length-1] = "..kqqqqqqqk.".replace(/q/g,"z"); legs = [[".kzzzzzzzzzk","...ks..sk...","...kk..kk..."],[".kzzzzzzzzzk","..ks....sk..","..kk....kk.."]]; }
     const all = rows.concat(legs[f]).slice(0,16).map(r => r.padEnd(17,"."));
@@ -122,8 +146,8 @@
       const decos = gi === 0 ? [[TREE,6,40],[FLOWER,20,12],[HOUSE,78,48],[FLOWER2,90,12],[TREE,94,40]]
                              : [[FLOWER2,4,12],[TREE,12,40],[FLOWER,60,12],[HOUSE,86,48]];
       decos.forEach(([src,left,w]) => { if(small && w>12 && left<50 && left>8) return; const im = new Image(); im.src = src; im.className = "deco"; im.alt = ""; im.style.left = left+"%"; if(left > 50) im.style.transform = "translateX(-100%)"; im.style.width = w+"px"; gEl.appendChild(im); });
-      const conf = GROUNDS[gi] || GROUNDS[1];
-      (small ? conf.small : conf.wide).forEach((id, k, arr) => {
+      const cast = pickCast(POOLS[gi] || POOLS[1], small ? 2 : 4);
+      cast.forEach((id, k, arr) => {
         const p = PALS[id];
         const frames = [palFrame(p,0), palFrame(p,1)];
         const el = document.createElement("button"); el.type = "button"; el.className = "pal";

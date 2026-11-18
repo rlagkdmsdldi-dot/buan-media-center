@@ -229,8 +229,9 @@ const SECTIONS = {
       {k:"size",label:"면적",type:"text",hint:"예: 85㎡"},
       {k:"fee",label:"사용료",type:"text",hint:"예: 1시간 10,000원"},
       {k:"img",label:"사진",type:"image"},
-      {k:"desc",label:"설명",type:"text",full:true}
-    ], view:x=>({img:x.img, t:x.name, s:[x.size,x.fee].filter(Boolean).join(" · ")}) },
+      {k:"desc",label:"설명",type:"text",full:true},
+      {k:"who",label:"이용 자격",type:"text",full:true,hint:"예: 누구나 이용 가능 / 조정실 사용 교육을 받은 분. '누구나'가 들어가면 회색, 아니면 주황색으로 표시돼요"}
+    ], view:x=>({img:x.img, t:x.name, s:[x.size,x.fee,x.who].filter(Boolean).join(" · ")}) },
   forms: { title:"신청서 양식", desc:"시설·장비 빌리기 화면 맨 아래 '신청서 양식 내려받기'에 나와요. 새 파일은 구글 드라이브에 올리고 공유 링크를 넣어요.", add:"양식 추가",
     fields:[
       {k:"title",label:"양식 이름",type:"text",req:true},
@@ -245,7 +246,7 @@ const SECTIONS = {
     ], view:x=>({img:x.img, t:x.name, s:x.desc}) }
 };
 const SETTING_FIELDS = [
-  {k:"logo",label:"로고 (흰 배경용)",type:"image",hint:"비워두면 기본 로고가 나와요"},
+  {k:"logo",label:"로고 (흰 배경용)",type:"image",hint:"배경이 투명한 PNG, 가로 1500px 이상 크게 만든 파일을 올려야 선명해요. 비워두면 기본 로고"},
   {k:"logoDark",label:"로고 (맨 아래 어두운 배경용)",type:"image",hint:"글자가 흰색인 로고. 비워두면 기본 흰 글씨 로고가 나와요"},
   {k:"heroTitle",label:"첫 화면 제목",type:"text",full:true,hint:"| 뒤는 색이 들어가는 둘째 줄이에요. 예: 배우고, 찍고, 나누는|부안의 미디어 놀이터"},
   {k:"heroSub",label:"첫 화면 설명",type:"textarea",full:true},
@@ -406,12 +407,15 @@ $("#filePick").addEventListener("change", async e => {
   const id = pickTarget, prev = $("#"+id+"-prev");
   prev.textContent = "올리는 중…"; prev.style.backgroundImage = "";
   try{
-    const data = await shrink(file);
-    const j = await call("upload", {name: file.name.replace(/\.[^.]+$/,"") + ".jpg", type:"image/jpeg", data});
+    const keep = /logo/i.test(id) && /^image\/(png|webp|gif)$/.test(file.type);   // 로고는 원본 그대로(투명 배경 유지, 선명하게)
+    if(keep && file.size > 8*1024*1024) throw new Error("로고 파일이 너무 커요. 8MB 이하로 올려 주세요.");
+    const data = keep ? await readAsDataURL(file) : await shrink(file);
+    const j = await call("upload", keep ? {name: file.name, type: file.type, data} : {name: file.name.replace(/\.[^.]+$/,"") + ".jpg", type:"image/jpeg", data});
     $("#"+id).value = j.url; prev.style.backgroundImage = `url('${j.url}')`; prev.textContent = "";
     toast("사진을 올렸어요. 저장을 눌러야 반영돼요.");
   }catch(err){ prev.textContent = "실패"; toast("사진을 올리지 못했어요: " + err.message); }
 });
+function readAsDataURL(f){ return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error("파일을 읽지 못했어요.")); r.readAsDataURL(f); }); }
 // 드라이브 용량을 아끼려고 사진을 긴 쪽 1200px로 줄여서 올림(한 장에 보통 0.1~0.3MB)
 function shrink(file){
   return new Promise((res, rej) => {
@@ -496,13 +500,16 @@ function renderRules(){
       <div class="f full"><label for="r-fac">시설 대관</label><textarea id="r-fac" style="min-height:150px">${esc((R.facility||[]).join("\n"))}</textarea></div>
       <div class="f full"><label for="r-note">준수사항 아래 안내 문구</label><input type="text" id="r-note" value="${esc(R.note||"")}"></div>
       <div class="f full"><label for="r-fee">장비 사용료 (한 줄에 하나, 장비명|금액)</label><textarea id="r-fee" style="min-height:150px">${esc((R.equipFees||[]).join("\n"))}</textarea></div>
+      <div class="f full"><label for="r-res">예약 안내 (시설·장비 화면 주황 박스)</label><input type="text" id="r-res" value="${esc(R.reserveNote||"")}"></div>
+      <div class="f full"><label for="r-mem">정회원 가입 방법 (한 줄에 하나)</label><textarea id="r-mem">${esc((R.member||[]).join("\n"))}</textarea></div>
+      <p class="hint" style="grid-column:1/-1;margin:0;color:var(--muted);font-size:.85rem">감면 대상은 '대상|필요 서류' 형식으로 적으면 대상 아래에 필요 서류가 함께 나와요.</p>
       <div class="f full"><label for="r-free">사용료 전액 면제 대상</label><textarea id="r-free">${esc((R.discountFree||[]).join("\n"))}</textarea></div>
       <div class="f full"><label for="r-half">사용료 50% 이내 감면 대상</label><textarea id="r-half" style="min-height:190px">${esc((R.discountHalf||[]).join("\n"))}</textarea></div>
       <div class="f full"><label for="r-dnote">감면 안내 문구</label><input type="text" id="r-dnote" value="${esc(R.discountNote||"")}"></div>
      </div><div style="margin-top:22px"><button class="btn primary" type="submit">준수사항 저장</button></div></form>`;
   $("#ruleForm").onsubmit = async e => { e.preventDefault();
     const lines = id => $(id).value.split("\n").map(s=>s.trim()).filter(Boolean);
-    STATE.rules = {equip: lines("#r-equip"), facility: lines("#r-fac"), note: $("#r-note").value.trim(), equipFees: lines("#r-fee"), discountFree: lines("#r-free"), discountHalf: lines("#r-half"), discountNote: $("#r-dnote").value.trim()};
+    STATE.rules = {equip: lines("#r-equip"), facility: lines("#r-fac"), note: $("#r-note").value.trim(), equipFees: lines("#r-fee"), discountFree: lines("#r-free"), discountHalf: lines("#r-half"), discountNote: $("#r-dnote").value.trim(), reserveNote: $("#r-res").value.trim(), member: lines("#r-mem")};
     await persist("rules").then(()=>toast("준수사항을 저장했어요.")).catch(()=>{}); };
 }
 

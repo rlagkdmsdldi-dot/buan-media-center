@@ -363,6 +363,14 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
 @media (max-width:760px){.film-grid{grid-template-columns:1fr}}
 .call-note{display:block;background:#fff4e2;border:1px solid #f3dcb3;color:#7a4a08;border-radius:12px;padding:12px 14px;font-size:.9rem;margin:14px 0 0}
 .call-note::before{content:"☎";font-weight:800;margin-right:6px}
+.who{margin:10px 0 0;font-size:.86rem;color:var(--muted);background:#f3f6f8;border-radius:10px;padding:8px 10px}
+.who b{color:var(--ink);margin-right:4px}
+.who.limit{background:#fff4e2;color:#7a4a08}
+.who.limit b{color:#7a4a08}
+.rules li small.doc{display:block;font-size:.8rem;color:var(--t-teal);margin-top:2px}
+.member-box{background:#e9f6f7;border:1px solid #c6e6e9;border-radius:18px;padding:20px 24px;margin:0 0 28px}
+.member-box h4{margin:0 0 8px;font-size:1.05rem}
+.member-box ul{margin:0;padding-left:1.2em;display:grid;gap:4px;color:#2e4a4f}
 .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media (max-width:760px){.rules-grid{grid-template-columns:1fr}}
 
@@ -584,18 +592,21 @@ footer.site{background:#111b29;color:#c9d0da;padding:56px 0 40px;font-size:.88re
   <section class="block soft">
     <div class="wrap">
       <div class="sec-head">
-        <div><h2 class="sec-title">대관 가능 시설</h2><p class="sec-lead">1시간 미만은 1시간 요금으로 계산해요. 시설마다 이용 자격이 있는 분께 승인돼요.</p></div>
+        <div><h2 class="sec-title">대관 가능 시설</h2><p class="sec-lead">1시간 미만은 1시간 요금으로 계산해요.<br>시설마다 이용 자격이 달라요. 사진 아래 '이용 자격'을 확인해 주세요.</p></div>
         <a class="btn color" id="rentFacBtn" href="#" target="_blank" rel="noopener">시설 대관 예약하기</a>
       </div>
+      <p class="call-note js-reserve-note" style="margin:-12px 0 28px"></p>
       <div class="space-grid" id="facGrid"></div>
     </div>
   </section>
   <section class="block" id="rent-equip">
     <div class="wrap">
       <div class="sec-head">
-        <div><h2 class="sec-title">대여 가능 장비</h2><p class="sec-lead">대여할 수 있는 장비와 예약 가능한 날짜는 공유누리에서 확인하고 바로 예약해요. 장비 대여는 센터 정회원이 이용할 수 있어요.</p></div>
+        <div><h2 class="sec-title">대여 가능 장비</h2><p class="sec-lead">대여할 수 있는 장비와 예약 가능한 날짜는 공유누리에서 확인하고 예약해요.<br>장비 대여는 센터 정회원만 이용할 수 있어요.</p></div>
         <a class="btn color" id="rentEqBtn" href="#" target="_blank" rel="noopener">공유누리에서 장비 예약하기</a>
       </div>
+      <p class="call-note js-reserve-note" style="margin:-12px 0 28px"></p>
+      <div class="member-box" id="memberBox"></div>
       <div class="grid4" id="eqGrid"></div>
       <div id="feeWrap"><h3 class="sub-title" style="margin-top:8px">장비 사용료 <small style="font-weight:600;color:var(--muted);font-size:.85rem">1일 기준</small></h3>
       <div class="fee-table" id="feeBox"></div>
@@ -940,6 +951,8 @@ function renderAll(){
   const homeCls = DATA.classes.filter(c=>c._st!=="교육 종료").sort((a,b)=>order[a._st]-order[b._st] || a.start.localeCompare(b.start));
 
   if(SETTINGS.logo) $$("#logoTop,#logoHero").forEach(i=>i.src=fixImg(SETTINGS.logo));
+  const hl = $("#logoHero"), fitHero = () => { if(hl.naturalWidth) hl.style.maxWidth = Math.max(240, Math.round(hl.naturalWidth * 1.5)) + "px"; };
+  hl.complete ? fitHero() : hl.addEventListener("load", fitHero, {once:true});
   if(SETTINGS.logoDark) $("#logoFoot").src = fixImg(SETTINGS.logoDark);
   const [t1,t2] = SETTINGS.heroTitle.split("|");
   $("#heroTitle").innerHTML = `${esc(t1)}${t2?`<br><span class="grad">${esc(t2)}</span>`:""}`;
@@ -997,7 +1010,11 @@ function renderAll(){
   $("#rent-discount").hidden = !((R.discountFree||[]).length || (R.discountHalf||[]).length);
   $("#discountNote").textContent = R.discountNote || "";
   $("#discountBox").innerHTML = [["전액 면제", R.discountFree],["50% 이내 감면", R.discountHalf]].filter(x=>x[1]&&x[1].length)
-    .map(([k,list])=>`<div class="rules"><h4>${k}</h4><ul>${list.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`).join("");
+    .map(([k,list])=>`<div class="rules"><h4>${k}</h4><ul>${list.map(i=>{ const [t,doc] = String(i).split("|"); return `<li>${esc(t)}${doc?`<small class="doc">필요 서류: ${esc(doc)}</small>`:""}</li>`; }).join("")}</ul></div>`).join("");
+  $$(".js-reserve-note").forEach(e => { e.textContent = R.reserveNote || ""; e.hidden = !R.reserveNote; });
+  const mem = R.member || [];
+  $("#memberBox").hidden = !mem.length;
+  $("#memberBox").innerHTML = `<h4>정회원 가입 방법</h4><ul>${mem.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`;
   const forms = DATA.forms || [];
   $("#rent-forms").hidden = !forms.length;
   $("#formsBox").innerHTML = forms.map(f => `<a class="form-file" href="${esc(f.url)}" download target="_blank" rel="noopener">
@@ -1044,7 +1061,8 @@ function filmCard(f){
 window.__filmFail = img => { if(img.dataset.hq){ const u = img.dataset.hq; img.dataset.hq = ""; img.src = u; } else window.__thumbFail(img); };
 function facCard(f){
   return `<div class="card rv"><div class="thumb wide">${imgOr(f.img, f.name)}</div><div class="card-body"><div class="card-title">${esc(f.name)}</div><div class="card-desc">${esc(f.desc)}</div>
-    <div class="badges">${f.size?`<span class="badge">${esc(f.size)}</span>`:""}${f.fee?`<span class="badge fee">${esc(f.fee)}</span>`:""}</div></div></div>`;
+    <div class="badges">${f.size?`<span class="badge">${esc(f.size)}</span>`:""}${f.fee?`<span class="badge fee">${esc(f.fee)}</span>`:""}</div>
+    ${f.who?`<p class="who${/누구나/.test(f.who)?"":" limit"}"><b>이용 자격</b> ${esc(f.who)}</p>`:""}</div></div>`;
 }
 
 /* ---------- 라우팅 ---------- */
