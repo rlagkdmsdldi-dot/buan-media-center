@@ -1,7 +1,7 @@
 /* 부안미디어센터 배경음악
    - 기본: 브라우저에서 바로 만드는 귀여운 8비트 음악(저작권 걱정 없음)
    - 관리자 → 기본 설정 → 'BGM 음악 파일 주소'에 mp3 주소를 넣으면 그 음악이 나와요
-   - 브라우저 정책상 소리는 방문자가 버튼을 눌러야 켜져요. 한 번 켜면 다음 방문 때 첫 클릭에 이어서 나와요 */
+   - 들어오면 바로 재생을 시도해요. 브라우저가 소리 자동재생을 막으면 화면을 처음 누르는 순간 나와요 */
 (function(){
   const KEY = "bmc-bgm";
   const btn = document.createElement("button");
@@ -73,11 +73,21 @@
   }
   btn.addEventListener("click", () => { if(on){ pause(); setState(false, true); } else { setState(true, true); play(); } });
 
-  // 지난번에 켜 두었으면 첫 클릭·터치 때 이어서 재생
-  let saved = "off"; try { saved = localStorage.getItem(KEY) || "off"; } catch(e){}
-  if(saved === "on"){
-    const resume = e => { if(e.target.closest && e.target.closest(".bgm-btn")) return; if(!on){ setState(true); play(); } };
-    document.addEventListener("pointerdown", resume, {once:true, capture:true});
+  // 기본으로 켜짐: 들어오자마자 재생을 시도하고, 브라우저가 막으면 첫 클릭·터치·키 입력 때 바로 재생
+  //  (방문자가 '음악 끄기'를 누른 적이 있으면 다음 방문에도 꺼진 채로 둬요)
+  let saved = "on"; try { saved = localStorage.getItem(KEY) || "on"; } catch(e){}
+  if(saved !== "off"){
+    const allowed = () => audio ? !audio.paused : (ctx && ctx.state === "running");
+    setState(true); play();
+    setTimeout(() => { if(!allowed()){ pause(); setState(false); arm(); } }, 400);
+    function arm(){
+      const go = e => {
+        if(e.target && e.target.closest && e.target.closest(".bgm-btn")) return;   // 버튼은 자기 클릭으로 처리
+        ["pointerdown","keydown","touchend"].forEach(t => document.removeEventListener(t, go, true));
+        if(!on){ setState(true); play(); }
+      };
+      ["pointerdown","keydown","touchend"].forEach(t => document.addEventListener(t, go, true));
+    }
   }
   // 다른 탭으로 가면 잠시 멈춤
   document.addEventListener("visibilitychange", () => { if(!on) return; if(document.hidden) pause(); else play(); });
